@@ -1,0 +1,3 @@
+{"nodes": [{"id":"8", "fx": visuWidth/2, "fy": visuHeight/2},
+{"id":"9"},{"id":"19"}],
+"edges": [{"source":0,"target":1},{"source":0,"target":2}]}

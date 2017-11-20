@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+<body>
+  You need to wait a bit...
+
+  <img src="pokemon/icons/136.png"/>
+
+  <p id="demo"></p>
+
+
+
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script>
+
+    $.ajax({
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      url: "https://pokeapi.co/api/v2/pokemon/136"
+    }).done(function( data ) {
+      if ( console && console.log ) {
+        $("#demo").html('<img src="' + data["sprites"]["front_default"] + '"/>');
+      }
+    });
+  </script>
+
+</body>
+</html>
