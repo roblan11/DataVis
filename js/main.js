@@ -20,15 +20,32 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
     }
 
     let data = {"nodes": nodes, "edges":edges}
-*/
+    */
 
 
     // data to test
-    data = {"nodes": [{"id":"8", "fx": visuWidth/2, "fy": visuHeight/2},{"id":"9"},{"id":"19"}],"edges": [{"source":0,"target":1},{"source":0,"target":2}]}
+    data = {
+        "nodes": [
+        {"id":"8", "fx": visuWidth/2, "fy": visuHeight/2, "current":1 },
+        {"id":"9"},
+        {"id":"19"},
+        {"id":"11"},
+        {"id":"12"},
+        {"id":"12"},
+        {"id":"12"},
+        {"id":"12"},
+        {"id":"12"},
+        {"id":"11"},
+        {"id":"11"},
+        {"id":"11"},
+        {"id":"11"},
+        {"id":"11"},
+        ]
+    }
 
-    createNetwork(data);
+    createForceGraph(data);
 
-    function createNetwork(data) {
+    function createForceGraph(data) {
 
         d3.select("svg#main").attr("height", visuHeight);
 
@@ -40,11 +57,10 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
         var colors = ["#996666", "#ff9966", "#339999", "#6699cc", "#ffcc66", "#ff6600", "#00ccccc"];
 
     //This isn't "gravity" it's the visual centering of the network based on its mass
-    var networkCenter = d3.forceCenter().x(visuWidth/2).y(visuHeight/2);
+    var center = d3.forceCenter().x(visuWidth/2).y(visuHeight/2);
 
     //CHARGE
-    var manyBody = d3.forceManyBody().strength(-150).distanceMax(100)
-
+    var manyBody = d3.forceManyBody().strength(-50).distanceMin(0)
 
 
     //Make the x-position equal to the x-position specified in the module positioning object or, if not in
@@ -58,25 +74,14 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
 
     var force = d3.forceSimulation(nodes)
     .force("charge", manyBody)
-    .force("link", d3.forceLink(edges).distance(fixedEdgeLength).iterations(1))
-    .force("center", networkCenter)
+    .force("center", center)
     .force("x", forceX)
     .force("y", forceY)
-    .on("tick", updateNetwork);
+    .on("tick", updateForceGraph);
 
-    var edgeEnter = d3.select("svg#main").selectAll("g.edge")
-    .data(edges)
-    .enter()
-    .append("g")
-    .attr("class", "edge");
-
-    edgeEnter
-    .append("line")
-    .style("stroke", "black")
-    .style("pointer-events", "none");
 
     var nodeEnter = d3.select("svg#main").selectAll("g.node")
-    .data(nodes, function (d) {return d.pokedex_number})
+    .data(nodes)
     .enter()
     .append("g")
     .attr("class", "node")
@@ -84,14 +89,14 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
      .attr("fy", function(d){return d.id=="8" ? 200 : null})*/
 
      nodeEnter.append("circle")
-     .attr("r", 16)
-     .style("fill", function (d) {return colors[d.module]})
+     .attr("r", function(d) {return d.current ? 30 : 15 })
+     .style("fill", function (d) {return d.id%2 ? "black" : "red"})
      .style("stroke", "black")
 
 
     //  force.start();
 
-    function updateNetwork(e) {
+    function updateForceGraph(e) {
         d3.select("svg#main").selectAll("line")
         .attr("x1", function (d) {return d.source.x})
         .attr("y1", function (d) {return d.source.y})
