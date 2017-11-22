@@ -8,3 +8,6 @@ https://gephi.org
 http://sigmajs.org
 
 http://blog.js.cytoscape.org/2016/07/04/social-network/
+
+
+search : https://harvesthq.github.io/chosen/

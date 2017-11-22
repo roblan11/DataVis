@@ -13,12 +13,6 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
         "nodes": [
         {"id":"0" },
         {"id":"12", "level":1},
-        {"id":"12", "level":1.5},
-        {"id":"11", "level":1.5},
-        {"id":"12", "level":1.5},
-        {"id":"11", "level":1.5},
-        {"id":"12", "level":1.5},
-        {"id":"11", "level":1.5},
         {"id":"12", "level":2},
         {"id":"12", "level":2},
         {"id":"12", "level":2},
@@ -44,7 +38,8 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
     let stylesOptionsCurrent = {
         "background-color": "red",
         "width":50,
-        "height":50
+        "height":50,
+        'background-image': ['data/icons/1.png']
     }
 
     var cy = cytoscape({
@@ -107,6 +102,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
             if (n == currentNode){
                 n.data("level",0)
                 n.style(stylesOptionsCurrent)
+
             }
             else {
                 n.data("level",1)
@@ -120,7 +116,6 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
 
     // on click event
     cy.on('tap', 'node', function(evt){
-
 
         node = evt.target;
 
