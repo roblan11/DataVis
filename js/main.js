@@ -44,8 +44,38 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
 
         ]
     }
-
-
+    
+    
+/****************************************************************************
+ ********************************* POKE PREVIEW *****************************
+ ****************************************************************************/
+    
+    let cp = d3.select("#current_pokemon")
+            .append("svg")
+            .attr("height", "100%")
+            .attr("width", "100%")
+            .append("g")
+    
+    let cp_title = cp.append("text")
+                    .attr("x", "10")
+                    .attr("y", "25")
+                    .attr("id", "desc_title")
+    
+    // TODO add other stats
+    
+    function updateDesc(currentNode) {
+        cp_title.text(currentNode.data("name"))
+    }
+    
+    function initDesc() {
+        let init_poke = data.nodes.filter(d => d.pokedex_number == currentId)
+        
+        cp_title.text(init_poke[0].name)
+    }
+        
+/****************************************************************************
+ ******************************** CYTOSCAPE GRAPH ***************************
+ ****************************************************************************/
 
     let stylesOptionsDefault = {
         'height': 20,
@@ -161,6 +191,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
                 n.data("level",l)
                 n.style(stylesOptionsDefault)
         })
+        
     }
 
 
@@ -196,16 +227,14 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
         let node = evt.target;
 
         updateGraph(node)
+        updateDesc(node)
 
         // update graph
         cy.layout(concentricOptions).run();
 
     });
-
-
-
-
+    
     initGraph()
-
-
+    initDesc()
+    
 });

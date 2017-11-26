@@ -54,3 +54,11 @@ h1 {
 	right: 100px;
 	top:100px;
 }
+
+#desc_title {
+    fill: white;
+    font-size: 20px;
+    font-family: monospace;
+    font-weight: bold;
+    text-transform: uppercase;
+}
