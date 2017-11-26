@@ -60,7 +60,6 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
     }
 
     let stylesOptionsCurrent = {
-<<<<<<< HEAD
         "font-size": "3px",
         "width":30,
         "height":30
