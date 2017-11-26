@@ -4,7 +4,9 @@
 <html>
 <head>
   <title>test demo</title>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" type="text/css" href="css/jquery.qtip.min.css">
   <link href="css/styles.css" rel="stylesheet" />
 
   <style type="text/css">
@@ -17,11 +19,20 @@
 </head>
 
 <body>
+
+<div id="hoverBox"></div>
+
   <div id="cy"></div>
 
+  <div id="current_pokemon">actual pokemon data</div>
 
-<script src="js/cytoscape.min.js"></script>
+  <div id="search_wrapper">chosen : check sources.txt</div>
+
+  <h1>Closest Pokemon</h1>
+
 <script src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script><script src="js/cytoscape.min.js"></script>
+<script type="text/javascript" src="js/cytoscape-qtip.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 </body>
 </html>

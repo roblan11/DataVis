@@ -1,35 +1,46 @@
 // js.cytoscape.org
 
-
 visuWidth = window.innerWidth || document.body.clientWidth;
 visuHeight = 600;
 
 fixedEdgeLength = 100;
+
+currentId = 25
+
+TYPE_COLOR = {
+    "Normal": "#A8A77A",
+    "Fire": "#EE8130",
+    "Water" :  "#6390F0",
+    "Electric" :  "#F7D02C",
+    "Grass" :  "#7AC74C",
+    "Ice" :  "#96D9D6",
+    "Fighting" : "#C22E28",
+    "Poison" :  "#A33EA1",
+    "Ground" :  "#E2BF65",
+    "Flying" :  "#A98FF3",
+    "Psychic" :  "#F95587",
+    "Bug" :  "#A6B91A",
+    "Rock" :  "#B6A136",
+    "Ghost" :  "#735797",
+    "Dragon" :  "#6F35FC",
+    "Dark" :  "#705746",
+    "Steel" :  "#B7B7CE",
+    "Fairy" :  "#D685AD"
+}
 
 
 d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.csv", function(pokemon) {
 
     data = {
         "nodes": [
-        {"id":"0" },
-        {"id":"12", "level":1},
-        {"id":"12", "level":1.5},
-        {"id":"11", "level":1.5},
-        {"id":"12", "level":1.5},
-        {"id":"11", "level":1.5},
-        {"id":"12", "level":1.5},
-        {"id":"11", "level":1.5},
-        {"id":"12", "level":2},
-        {"id":"12", "level":2},
-        {"id":"12", "level":2},
-        {"id":"12", "level":2},
-        {"id":"12", "level":2},
-        {"id":"11", "level":2},
-        {"id":"12", "level":2},
-        {"id":"12", "level":2},
-        {"id":"12", "level":2},
-        {"id":"11", "level":2},
-        {"id":"12", "level":2},
+        {"pokedex_number":"1", "type1":"Grass", "type2":"Grass", "name":"Bulbizarre", "classification":["bulb"] },
+        {"pokedex_number":"2", "type1":"Grass", "type2":"Grass", "name":"Herbizaur", "classification":["bulb"] },
+        {"pokedex_number":"4", "type1":"Fire", "type2":"Fire", "name":"Salameche", "classification":["lizard"] },
+        {"pokedex_number":"5", "type1":"Water", "type2":"Water", "name":"Carapuce", "classification":["turtle"] },
+        {"pokedex_number":"6", "type1":"Grass", "type2":"Grass", "name":"Herbizaur", "classification":["bulb"] },
+        {"pokedex_number":"9", "type1":"Fire", "type2":"Fire", "name":"Salameche", "classification":["lizard"] },
+        {"pokedex_number":"7", "type1":"Water", "type2":"Water", "name":"Carapuce", "classification":["turtle"] },
+        {"pokedex_number":"25", "type1":"Electric", "type2":"Electric", "name":"Pikachu", "classification":["Mouse"] },
         ]
     }
 
@@ -38,16 +49,28 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
     let stylesOptionsDefault = {
         'height': 20,
         'width': 20,
-        'background-color': '#30c9bc'
+        "background-height": "30%",
+        "background-width": "37%",
+        "font-size": "2px",
+        "content": "",
+        'text-valign': 'bottom',
+        'text-halign': 'center',
+        "text-transform": "uppercase"
     }
 
     let stylesOptionsCurrent = {
-        "background-color": "red",
-        "width":50,
-        "height":50
+        "font-size": "3px",
+        "width":30,
+        "height":30
     }
 
-    var cy = cytoscape({
+    let stylesHover = {
+        "width":30,
+        "height":30
+    }
+
+
+    let cy = cytoscape({
         container: document.getElementById('cy'),
 
         style: [
@@ -60,7 +83,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
 
 
 
-    var concentricOptions = {
+    let concentricOptions = {
         name: 'concentric',
         concentric: function(node) {
             return 10 - node.data('level');
@@ -78,20 +101,30 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
 
             // You have to have threshold to know the level of the pokemon in the graph
 
-            let l = 2; 
+            let l = 1; 
             let stylesOptions = {}
             let currentParam = 0
 
-            if (n.id == 0) {
+            if (n.pokedex_number == 25) {
                 l = 0
                 currentParam = 1
+                stylesOptionsCurrent["content"] = n.name
                 stylesOptions = stylesOptionsCurrent
             }
 
+            stylesOptions["background-color"] = TYPE_COLOR[n.type1];
+            stylesOptions["border-color"] = TYPE_COLOR[n.type2];
+            stylesOptions["background-image"] = "data/icons/" + n.pokedex_number + ".png";
+
+
             cy.add({
                 data: {
+                    id : n.pokedex_number,
                     level: l,
-                    current: currentParam
+                    current: currentParam,
+                    name: n.name,
+                    type1 : n.type1,
+                    type2: n.type2
                 }, 
                 style : stylesOptions
             })
@@ -103,32 +136,61 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
 
 
     function updateGraph(currentNode){
+
+        currentId = currentNode.data("id")
+
         cy.elements().toArray().forEach(n => {
-            if (n == currentNode){
-                n.data("level",0)
-                n.style(stylesOptionsCurrent)
+            let l = 1
+            let stylesOptions = stylesOptionsDefault
+
+            if (n.data("id") == currentId){
+                l = 0
+
+                stylesOptions = stylesOptionsCurrent
+
+                stylesOptions["content"] = n.data("name");
+                stylesOptions["background-color"] = TYPE_COLOR[n.data("type1")];
+                stylesOptions["border-color"] = TYPE_COLOR[n.data("type2")];
+                stylesOptions["background-image"] = "data/icons/" + n.data("id") + ".png";
+
             }
             else {
-                n.data("level",1)
-                n.style(stylesOptionsDefault)
             }
+                n.data("level",l)
+                n.style(stylesOptionsDefault)
         })
     }
 
 
 
+    // just use the regular qtip api but on cy elements
+    cy.on('mouseover', 'node', function(event) {
+        let node = event.target;
+
+        stylesHover['content'] = node.data("name");
+        node.style(stylesHover)
+
+    });
+
+    // just use the regular qtip api but on cy elements
+    cy.on('mouseout', 'node', function(event) {
+        let node = event.target;
+
+        if (node.data("id") == currentId) {
+            node.style(stylesOptionsCurrent)
+        }
+        else {
+            node.style(stylesOptionsDefault)
+
+        }
+
+    });
+
 
     // on click event
     cy.on('tap', 'node', function(evt){
 
-
-        node = evt.target;
-
-        /*old_current = cy.elements("node[current=1]")
-        console.log(old_current.data())
-
-        old_current.data("current", 0)
-        node.data("current", 1)*/
+        let node = evt.target;
 
         updateGraph(node)
 
@@ -136,6 +198,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
         cy.layout(concentricOptions).run();
 
     });
+
 
 
 
