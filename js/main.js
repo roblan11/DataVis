@@ -41,6 +41,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
         {"pokedex_number":"9", "type1":"Fire", "type2":"Fire", "name":"Salameche", "classification":["lizard"] },
         {"pokedex_number":"7", "type1":"Water", "type2":"Water", "name":"Carapuce", "classification":["turtle"] },
         {"pokedex_number":"25", "type1":"Electric", "type2":"Electric", "name":"Pikachu", "classification":["Mouse"] },
+
         ]
     }
 
@@ -59,6 +60,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
     }
 
     let stylesOptionsCurrent = {
+<<<<<<< HEAD
         "font-size": "3px",
         "width":30,
         "height":30
@@ -153,6 +155,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
                 stylesOptions["border-color"] = TYPE_COLOR[n.data("type2")];
                 stylesOptions["background-image"] = "data/icons/" + n.data("id") + ".png";
 
+
             }
             else {
             }
@@ -175,6 +178,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
     // just use the regular qtip api but on cy elements
     cy.on('mouseout', 'node', function(event) {
         let node = event.target;
+
 
         if (node.data("id") == currentId) {
             node.style(stylesOptionsCurrent)
