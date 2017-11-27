@@ -36,7 +36,6 @@ h1 {
 }
 
 #current_pokemon {
-
 	width:200px;
 	height:200px;
 	position: absolute;
@@ -55,10 +54,26 @@ h1 {
 	top:100px;
 }
 
-#desc_title {
+#desc_name {
     fill: white;
-    font-size: 20px;
+    font-size: 200%;
     font-family: monospace;
     font-weight: bold;
     text-transform: uppercase;
+    text-anchor: middle;
+}
+
+.desc_text {
+    fill: gray;
+    font-size: 110%;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.desc_sub {
+    fill: lightgray;
+    font-size: 110%;
+    font-family: sans-serif;
+    font-weight: bold;
+    text-anchor: end;
 }

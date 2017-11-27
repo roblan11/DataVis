@@ -37,14 +37,13 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
         {"pokedex_number":"2", "type1":"Grass", "type2":"Grass", "name":"Herbizaur", "classification":["bulb"] },
         {"pokedex_number":"4", "type1":"Fire", "type2":"Fire", "name":"Salameche", "classification":["lizard"] },
         {"pokedex_number":"5", "type1":"Water", "type2":"Water", "name":"Carapuce", "classification":["turtle"] },
-        {"pokedex_number":"6", "type1":"Grass", "type2":"Grass", "name":"Herbizaur", "classification":["bulb"] },
+        {"pokedex_number":"6", "type1":"Grass", "type2":"Dragon", "name":"Herbizaur", "classification":["bulb"] },
         {"pokedex_number":"9", "type1":"Fire", "type2":"Fire", "name":"Salameche", "classification":["lizard"] },
         {"pokedex_number":"7", "type1":"Water", "type2":"Water", "name":"Carapuce", "classification":["turtle"] },
         {"pokedex_number":"25", "type1":"Electric", "type2":"Electric", "name":"Pikachu", "classification":["Mouse"] },
 
         ]
     }
-    
     
 /****************************************************************************
  ********************************* POKE PREVIEW *****************************
@@ -54,23 +53,102 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
             .append("svg")
             .attr("height", "100%")
             .attr("width", "100%")
-            .append("g")
     
-    let cp_title = cp.append("text")
-                    .attr("x", "10")
-                    .attr("y", "25")
-                    .attr("id", "desc_title")
+    let cp_bg = cp.append("g")
+    
+    const bg_rect = [
+        {xpos: "0%", ypos:  "0%", width: "100%", height:  "20%", id: "type2_bg"},
+        {xpos: "2%", ypos:  "2%", width:  "96%", height:  "16%", id: "type1_bg"},
+        {xpos: "0%", ypos: "20%", width: "100%", height:  "80%", id: "bg"}
+    ]
+    
+    for (let r of bg_rect) {
+        cp_bg.append("rect")
+            .attr("x", r.xpos)
+            .attr("y", r.ypos)
+            .attr("width", r.width)
+            .attr("height", r.height)
+            .attr("id", r.id)
+    }
+    
+    const name = {xpos: "50%", ypos: 25, id: "desc_name"}
+    
+    cp.append("text")
+        .attr("x", name.xpos)
+        .attr("y", name.ypos)
+        .attr("id", name.id)
+    
+    let cp_r = cp.append("g")
+                .attr("class", "desc_text")
+    
+    let cp_l = cp.append("g")
+                .attr("class", "desc_sub")
+    
+    const x_meas = {left: "48%", right: "52%"}
+    
+    const types = [
+        {ypos: 50, id: "type1"},
+        {ypos: 70, id: "type2"},
+        {ypos: 90, id: "poke_num"},
+        {ypos: 110, id: "class"}
+    ]
+    
+    for (let type of types) {
+        cp_l.append("text")
+            .attr("x", x_meas.left)
+            .attr("y", type.ypos)
+            .text(type.id)
+        
+        cp_r.append("text")
+            .attr("x", x_meas.right)
+            .attr("y", type.ypos)
+            .attr("id", type.id)
+    }
+    
+    let cp_img = cp.append("image")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", "20%")
+                    .attr("height", "20%")
     
     // TODO add other stats
     
-    function updateDesc(currentNode) {
-        cp_title.text(currentNode.data("name"))
+    function updateDesc(id) {
+        
+        let curr_poke = data.nodes.filter(d => d.pokedex_number == currentId)[0]
+        
+        cp_bg.select("#type1_bg")
+            .attr("fill", TYPE_COLOR[curr_poke.type1])
+        
+        cp_bg.select("#type2_bg")
+            .attr("fill", TYPE_COLOR[curr_poke.type2])
+        
+        cp.select("#desc_name")
+            .text(curr_poke.name)
+        
+        cp_r.select("#type1")
+            .text(curr_poke.type1)
+            .attr("fill", TYPE_COLOR[curr_poke.type1])
+        
+        cp_r.select("#type2")
+            .text(curr_poke.type2)
+            .attr("fill", TYPE_COLOR[curr_poke.type2])
+        
+        cp_r.select("#poke_num")
+            .text(id)
+        
+        cp_r.select("#class")
+            .text(curr_poke.classification)
+        
+        cp_img.attr("href", "data/icons/" + id + ".png")
+        
     }
     
     function initDesc() {
-        let init_poke = data.nodes.filter(d => d.pokedex_number == currentId)
+        cp_bg.select("#bg")
+            .attr("fill", "white")
         
-        cp_title.text(init_poke[0].name)
+        updateDesc(currentId)
     }
         
 /****************************************************************************
@@ -227,7 +305,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
         let node = evt.target;
 
         updateGraph(node)
-        updateDesc(node)
+        updateDesc(node.data("id"))
 
         // update graph
         cy.layout(concentricOptions).run();
