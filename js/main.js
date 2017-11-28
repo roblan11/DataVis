@@ -176,10 +176,10 @@ d3.csv("./data/pokemon.csv", function(data) {
         style: [
         {
             selector: 'node',
-            style: stylesOptionsDefault,
-            autoungrabify: true
+            style: stylesOptionsDefault
         }
-        ]
+        ],
+        autoungrabify: true
     });
 
 
