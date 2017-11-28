@@ -33,13 +33,13 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
 
     data = {
         "nodes": [
-        {"pokedex_number":"1", "type1":"Grass", "type2":"Grass", "name":"Bulbizarre", "classification":["bulb"] },
-        {"pokedex_number":"2", "type1":"Grass", "type2":"Grass", "name":"Herbizaur", "classification":["bulb"] },
-        {"pokedex_number":"4", "type1":"Fire", "type2":"Fire", "name":"Salameche", "classification":["lizard"] },
-        {"pokedex_number":"5", "type1":"Water", "type2":"Water", "name":"Carapuce", "classification":["turtle"] },
-        {"pokedex_number":"6", "type1":"Grass", "type2":"Dragon", "name":"Herbizaur", "classification":["bulb"] },
-        {"pokedex_number":"9", "type1":"Fire", "type2":"Fire", "name":"Salameche", "classification":["lizard"] },
-        {"pokedex_number":"7", "type1":"Water", "type2":"Water", "name":"Carapuce", "classification":["turtle"] },
+        {"pokedex_number":"1", "type1":"Grass", "type2":"Grass", "name":"Bulbasaur", "classification":["bulb"] },
+        {"pokedex_number":"2", "type1":"Grass", "type2":"Grass", "name":"Ivysaur", "classification":["bulb"] },
+        {"pokedex_number":"4", "type1":"Fire", "type2":"Fire", "name":"Venusaur", "classification":["lizard"] },
+        {"pokedex_number":"5", "type1":"Water", "type2":"Water", "name":"Charmander", "classification":["turtle"] },
+        {"pokedex_number":"6", "type1":"Grass", "type2":"Dragon", "name":"Charmeleon", "classification":["bulb"] },
+        {"pokedex_number":"9", "type1":"Fire", "type2":"Fire", "name":"Charizard", "classification":["lizard"] },
+        {"pokedex_number":"7", "type1":"Water", "type2":"Water", "name":"Clefable", "classification":["turtle"] },
         {"pokedex_number":"25", "type1":"Electric", "type2":"Electric", "name":"Pikachu", "classification":["Mouse"] },
 
         ]
@@ -140,7 +140,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
         cp_r.select("#class")
             .text(curr_poke.classification)
         
-        cp_img.attr("href", "data/icons/" + id + ".png")
+        cp_img.attr("href", "data/Sprites/" + curr_poke.name)
         
     }
     
