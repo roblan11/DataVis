@@ -30,7 +30,15 @@ TYPE_COLOR = {
 }
 
 
+
+
 d3.csv("./data/pokemon_1.csv", function(data) {
+
+    let heights = data.map(d => d.height_m)
+    let rangeHeight = d3.scaleLinear().domain([d3.min(heights), d3.max(heights)]).range([0,1])
+
+    let weights = data.map(d => d.weight_kg)
+    let rangeWeight = d3.scaleLinear().domain([d3.min(weights), d3.max(weights)]).range([0,1])
     
 /****************************************************************************
  ********************************** SEARCH **********************************
@@ -44,7 +52,7 @@ d3.csv("./data/pokemon_1.csv", function(data) {
  ****************************************************************************/
 
     let nbPokemon = data.length
-    let nbLevel = nbPokemon/30
+    let nbLevel = nbPokemon/10
     
     let cp = d3.select("#current_pokemon")
             .append("svg")
@@ -232,7 +240,10 @@ d3.csv("./data/pokemon_1.csv", function(data) {
                     current: currentParam,
                     name: n.name,
                     type1 : n.type1,
-                    type2: n.type2
+                    type2: n.type2,
+                    height: n.height_m,
+                    weight: n.weight_kg,
+                    classification: n.classfication
                 }, 
                 style : stylesOptions
             }
@@ -270,13 +281,43 @@ d3.csv("./data/pokemon_1.csv", function(data) {
             }
             n.style(stylesOptions)
 
-            let node = {"closeness": 0.5, "id": n.data("id")}
+            // compute closeness
+            let closeness = 0
+            let currentNode = cy.getElementById(currentId)
+            
+            let classification = n.data("classification")
+            let h = n.data("height")
+            let w = n.data("weight")
+            let type1 = n.data("type1")
+            let type2 = n.data("type2")
+            
+            let classification_c = currentNode.data("classification")
+            let h_c = currentNode.data("height")
+            let w_c = currentNode.data("weight")
+            let type1_c = currentNode.data("type1")
+            let type2_c = currentNode.data("type2")
+
+
+            /*classification.forEach(c=>{
+                classification_c.forEach(c1 => {
+                    closeness += (c == c1) ? 0.5 : 0
+                })
+            })*/
+
+            closeness -= rangeHeight(Math.abs(h_c - h))
+            closeness -= rangeWeight(Math.abs(w_c - w))
+
+
+            n.data("closeness", closeness)
+
+            let node = {"closeness": closeness, "id": n.data("id")}
 
             updatedNodes.push(node)
         })
 
         // sort 
-        updatedNodes.sort((a,b) => a.closeness < b.closeness)
+        updatedNodes.sort((a,b) => a.closeness > b.closeness)
+        console.log(updatedNodes)
 
         // change level depending on array position
         for(let i = 0; i < updatedNodes.length; i++){
@@ -293,6 +334,8 @@ d3.csv("./data/pokemon_1.csv", function(data) {
             cy.getElementById(n.id).data("level",l)
             
         }
+
+        console.log(cy.getElementById(25).data("closeness"))
         
     }
 
