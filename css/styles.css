@@ -88,3 +88,10 @@ h1 {
     font-family: sans-serif;
     font-weight: bold;
 }
+
+#options {
+	position: absolute;
+	top:3%;
+	left:3%;
+	font-size: 2em;
+}
