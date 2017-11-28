@@ -8,42 +8,35 @@ fixedEdgeLength = 100;
 currentId = 25
 
 TYPE_COLOR = {
-    "Normal": "#A8A77A",
-    "Fire": "#EE8130",
-    "Water" :  "#6390F0",
-    "Electric" :  "#F7D02C",
-    "Grass" :  "#7AC74C",
-    "Ice" :  "#96D9D6",
-    "Fighting" : "#C22E28",
-    "Poison" :  "#A33EA1",
-    "Ground" :  "#E2BF65",
-    "Flying" :  "#A98FF3",
-    "Psychic" :  "#F95587",
-    "Bug" :  "#A6B91A",
-    "Rock" :  "#B6A136",
-    "Ghost" :  "#735797",
-    "Dragon" :  "#6F35FC",
-    "Dark" :  "#705746",
-    "Steel" :  "#B7B7CE",
-    "Fairy" :  "#D685AD"
+    "normal": "#A8A77A",
+    "fire": "#EE8130",
+    "water" :  "#6390F0",
+    "electric" :  "#F7D02C",
+    "grass" :  "#7AC74C",
+    "ice" :  "#96D9D6",
+    "fighting" : "#C22E28",
+    "poison" :  "#A33EA1",
+    "ground" :  "#E2BF65",
+    "flying" :  "#A98FF3",
+    "psychic" :  "#F95587",
+    "bug" :  "#A6B91A",
+    "rock" :  "#B6A136",
+    "ghost" :  "#735797",
+    "dragon" :  "#6F35FC",
+    "dark" :  "#705746",
+    "steel" :  "#B7B7CE",
+    "fairy" :  "#D685AD"
 }
 
 
-d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.csv", function(pokemon) {
-
-    data = {
-        "nodes": [
-        {"pokedex_number":"1", "type1":"Grass", "type2":"Grass", "name":"Bulbasaur", "classification":["bulb"] },
-        {"pokedex_number":"2", "type1":"Grass", "type2":"Grass", "name":"Ivysaur", "classification":["bulb"] },
-        {"pokedex_number":"4", "type1":"Fire", "type2":"Fire", "name":"Venusaur", "classification":["lizard"] },
-        {"pokedex_number":"5", "type1":"Water", "type2":"Water", "name":"Charmander", "classification":["turtle"] },
-        {"pokedex_number":"6", "type1":"Grass", "type2":"Dragon", "name":"Charmeleon", "classification":["bulb"] },
-        {"pokedex_number":"9", "type1":"Fire", "type2":"Fire", "name":"Charizard", "classification":["lizard"] },
-        {"pokedex_number":"7", "type1":"Water", "type2":"Water", "name":"Clefable", "classification":["turtle"] },
-        {"pokedex_number":"25", "type1":"Electric", "type2":"Electric", "name":"Pikachu", "classification":["Mouse"] },
-
-        ]
-    }
+d3.csv("/data/pokemon.csv", function(data) {
+    
+/****************************************************************************
+ ********************************** SEARCH **********************************
+ ****************************************************************************/
+    
+    // TODO SEARCH POKEMON BY NAME
+    // ? SEARCH OTHER FEATURES
     
 /****************************************************************************
  ********************************* POKE PREVIEW *****************************
@@ -53,6 +46,9 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
             .append("svg")
             .attr("height", "100%")
             .attr("width", "100%")
+    
+    const CP_W = d3.select("#current_pokemon").node().getBoundingClientRect().width
+    const CP_H = d3.select("#current_pokemon").node().getBoundingClientRect().height
     
     let cp_bg = cp.append("g")
     
@@ -71,7 +67,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
             .attr("id", r.id)
     }
     
-    const name = {xpos: "50%", ypos: 25, id: "desc_name"}
+    const name = {xpos: "50%", ypos: "10%", id: "desc_name"}
     
     cp.append("text")
         .attr("x", name.xpos)
@@ -87,17 +83,16 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
     const x_meas = {left: "48%", right: "52%"}
     
     const types = [
-        {ypos: 50, id: "type1"},
-        {ypos: 70, id: "type2"},
-        {ypos: 90, id: "poke_num"},
-        {ypos: 110, id: "class"}
+        {ypos: CP_H*0.3, id: "type", name: "type"},
+        {ypos: CP_H*0.3 + 15, id: "poke_num", name: "pokedex number"},
+        {ypos: CP_H*0.3 + 30, id: "TODO", name: "whatevs"}
     ]
     
     for (let type of types) {
         cp_l.append("text")
             .attr("x", x_meas.left)
             .attr("y", type.ypos)
-            .text(type.id)
+            .text(type.name)
         
         cp_r.append("text")
             .attr("x", x_meas.right)
@@ -115,7 +110,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
     
     function updateDesc(id) {
         
-        let curr_poke = data.nodes.filter(d => d.pokedex_number == currentId)[0]
+        let curr_poke = data.filter(d => d.pokedex_number == currentId)[0]
         
         cp_bg.select("#type1_bg")
             .attr("fill", TYPE_COLOR[curr_poke.type1])
@@ -126,21 +121,17 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
         cp.select("#desc_name")
             .text(curr_poke.name)
         
-        cp_r.select("#type1")
-            .text(curr_poke.type1)
+        cp_r.select("#type")
+            .text(curr_poke.type1 + " / " + curr_poke.type2)
             .attr("fill", TYPE_COLOR[curr_poke.type1])
-        
-        cp_r.select("#type2")
-            .text(curr_poke.type2)
-            .attr("fill", TYPE_COLOR[curr_poke.type2])
         
         cp_r.select("#poke_num")
             .text(id)
         
-        cp_r.select("#class")
-            .text(curr_poke.classification)
+        cp_r.select("#TODO")
+            .text(curr_poke.japanese_name)
         
-        cp_img.attr("href", "data/Sprites/" + curr_poke.name)
+        cp_img.attr("href", "data/sprites/" + id + ".png")
         
     }
     
@@ -185,7 +176,8 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
         style: [
         {
             selector: 'node',
-            style: stylesOptionsDefault
+            style: stylesOptionsDefault,
+            autoungrabify: true
         }
         ]
     });
@@ -206,7 +198,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
 
     // init
     function initGraph() {
-        data.nodes.forEach(n => {
+        data.forEach(n => {
 
             // You have to have threshold to know the level of the pokemon in the graph
 
@@ -223,7 +215,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
 
             stylesOptions["background-color"] = TYPE_COLOR[n.type1];
             stylesOptions["border-color"] = TYPE_COLOR[n.type2];
-            stylesOptions["background-image"] = "data/icons/" + n.pokedex_number + ".png";
+            stylesOptions["background-image"] = "data/sprites/" + n.pokedex_number + ".png";
 
 
             cy.add({
@@ -260,7 +252,7 @@ d3.csv("https://raw.githubusercontent.com/roblan11/DataVis/master/data/pokemon.c
                 stylesOptions["content"] = n.data("name");
                 stylesOptions["background-color"] = TYPE_COLOR[n.data("type1")];
                 stylesOptions["border-color"] = TYPE_COLOR[n.data("type2")];
-                stylesOptions["background-image"] = "data/icons/" + n.data("id") + ".png";
+                stylesOptions["background-image"] = "data/sprites/" + n.data("id") + ".png";
 
 
             }

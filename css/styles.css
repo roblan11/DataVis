@@ -32,7 +32,7 @@ h1 {
 	position: absolute;
 	top:3%;
 	right:3%;
-	background:red;
+	background:blue;
 }
 
 #current_pokemon {
@@ -61,18 +61,17 @@ h1 {
     font-weight: bold;
     text-transform: uppercase;
     text-anchor: middle;
+    alignment-baseline: middle;
 }
 
 .desc_text {
     fill: gray;
-    font-size: 110%;
     font-family: sans-serif;
     font-weight: bold;
 }
 
 .desc_sub {
     fill: lightgray;
-    font-size: 110%;
     font-family: sans-serif;
     font-weight: bold;
     text-anchor: end;
