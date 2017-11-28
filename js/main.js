@@ -180,7 +180,7 @@ d3.csv("./data/pokemon_1.csv", function(data) {
             .text(curr_poke.name)
 
         cp_top_right.select("#n_pokedex")
-            .text(id)
+            .text(currentId)
 
         if (curr_poke.type1 == curr_poke.type2) {
             cp_top_right.select("#type")
@@ -219,7 +219,7 @@ d3.csv("./data/pokemon_1.csv", function(data) {
 //        cp_r.select("#classif")
 //            .text(curr_poke.classfication)
 
-        cp_top_img.attr("href", "data/sprites/" + id + ".png")
+        cp_top_img.attr("href", "data/sprites/" + currentId + ".png")
 
     }
 
@@ -290,7 +290,7 @@ d3.csv("./data/pokemon_1.csv", function(data) {
 
             // You have to have threshold to know the level of the pokemon in the graph
 
-            let l = 1;
+            let l = 1; 
             let stylesOptions = {}
             let currentParam = 0
 
@@ -317,7 +317,7 @@ d3.csv("./data/pokemon_1.csv", function(data) {
                     height: n.height_m,
                     weight: n.weight_kg,
                     classification: n.classfication
-                },
+                }, 
                 style : stylesOptions
             }
             cy.add(node)
@@ -326,7 +326,7 @@ d3.csv("./data/pokemon_1.csv", function(data) {
 
         // updatedNodes.forEach(n => {
         //     cy.add(n)
-        // })
+        // }) 
 
         cy.layout(concentricOptions).run();
     }
@@ -357,13 +357,13 @@ d3.csv("./data/pokemon_1.csv", function(data) {
             // compute closeness
             let closeness = 0
             let currentNode = cy.getElementById(currentId)
-
+            
             let classification = n.data("classification")
             let h = n.data("height")
             let w = n.data("weight")
             let type1 = n.data("type1")
             let type2 = n.data("type2")
-
+            
             let classification_c = currentNode.data("classification")
             let h_c = currentNode.data("height")
             let w_c = currentNode.data("weight")
@@ -388,13 +388,13 @@ d3.csv("./data/pokemon_1.csv", function(data) {
             updatedNodes.push(node)
         })
 
-        // sort
+        // sort 
         updatedNodes.sort((a,b) => a.closeness > b.closeness)
         console.log(updatedNodes)
 
         // change level depending on array position
         for(let i = 0; i < updatedNodes.length; i++){
-
+            
             let n = updatedNodes[i];
 
             if(n.id == currentId) {
@@ -405,11 +405,11 @@ d3.csv("./data/pokemon_1.csv", function(data) {
             }
 
             cy.getElementById(n.id).data("level",l)
-
+            
         }
 
         console.log(cy.getElementById(25).data("closeness"))
-
+        
     }
 
 
@@ -453,8 +453,8 @@ d3.csv("./data/pokemon_1.csv", function(data) {
         cy.layout(concentricOptions).run();
 
     });
-
+    
     initGraph()
     initDesc()
-
+    
 });
