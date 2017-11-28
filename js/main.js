@@ -42,24 +42,37 @@ d3.csv("./data/pokemon.csv", function(data) {
  ********************************* POKE PREVIEW *****************************
  ****************************************************************************/
     
+    /* DATA ENTRIES TO SHOW
+       name / pokedex_number
+       type1 / type2
+       height_m / weight_kg
+       classification
+     */
+    
     let cp = d3.select("#current_pokemon")
             .append("svg")
             .attr("height", "100%")
             .attr("width", "100%")
     
+    cp.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("fill", "white")
+    
     const CP_W = d3.select("#current_pokemon").node().getBoundingClientRect().width
     const CP_H = d3.select("#current_pokemon").node().getBoundingClientRect().height
     
-    let cp_bg = cp.append("g")
-    
-    const bg_rect = [
-        {xpos: "0%", ypos:  "0%", width: "100%", height:  "20%", id: "type2_bg"},
-        {xpos: "2%", ypos:  "2%", width:  "96%", height:  "16%", id: "type1_bg"},
-        {xpos: "0%", ypos: "20%", width: "100%", height:  "80%", id: "bg"}
+    const top_rect = [
+        {xpos: "0%", ypos:  "0%", width: "100%", height:  "40%", id: "type2_bg"},
+        {xpos: "2%", ypos:  "2%", width:  "96%", height:  "36%", id: "type1_bg"}
     ]
     
-    for (let r of bg_rect) {
-        cp_bg.append("rect")
+    let cp_top = cp.append("g");
+    
+    for (let r of top_rect) {
+        cp_top.append("rect")
             .attr("x", r.xpos)
             .attr("y", r.ypos)
             .attr("width", r.width)
@@ -67,78 +80,138 @@ d3.csv("./data/pokemon.csv", function(data) {
             .attr("id", r.id)
     }
     
-    const name = {xpos: "50%", ypos: "10%", id: "desc_name"}
+    const name = {xpos: "96%", ypos: "4%", id: "desc_name"}
     
-    cp.append("text")
+    cp_top.append("text")
         .attr("x", name.xpos)
         .attr("y", name.ypos)
         .attr("id", name.id)
     
-    let cp_r = cp.append("g")
-                .attr("class", "desc_text")
+    let cp_top_img = cp_top.append("image")
+                    .attr("x", "2%")
+                    .attr("y", "2%")
+                    .attr("width", "36%")
+                    .attr("height", "36%")
     
-    let cp_l = cp.append("g")
-                .attr("class", "desc_sub")
-    
-    const x_meas = {left: "48%", right: "52%"}
-    
-    const types = [
-        {ypos: CP_H*0.3, id: "type", name: "type"},
-        {ypos: CP_H*0.3 + 15, id: "poke_num", name: "pokedex number"},
-        {ypos: CP_H*0.3 + 30, id: "TODO", name: "whatevs"}
-    ]
-    
-    for (let type of types) {
-        cp_l.append("text")
-            .attr("x", x_meas.left)
-            .attr("y", type.ypos)
-            .text(type.name)
+    const top_desc = {
+        txt : [
+            {pos: 0, id: "n_pokedex", name: "number"},
+            {pos: 1, id: "type", name: "type"},
+            {pos: 2, id: "classif", name: "classification"}
+        ],
+        xpos : {left: "60%", right: "62%"}
         
-        cp_r.append("text")
-            .attr("x", x_meas.right)
-            .attr("y", type.ypos)
-            .attr("id", type.id)
     }
     
-    let cp_img = cp.append("image")
-                    .attr("x", 0)
-                    .attr("y", 0)
-                    .attr("width", "20%")
-                    .attr("height", "20%")
+    let cp_top_left = cp.append("g").attr("class", "desc_top_typename");
+    let cp_top_right = cp.append("g").attr("class", "desc_top_typeval");
     
-    // TODO add other stats
+    for (let d of top_desc.txt) {
+        let ypos = CP_H*0.2 + d.pos*15
+        
+        cp_top_left.append("text")
+            .attr("x", top_desc.xpos.left)
+            .attr("y", ypos)
+            .text(d.name)
+        
+        cp_top_right.append("text")
+            .attr("x", top_desc.xpos.right)
+            .attr("y", ypos)
+            .attr("id", d.id)
+    }
+    
+    // --------------------------------------------------------------------------
+    
+//    let cp_bottom = cp.append("g")
+//                .attr("class", "desc_text")
+//    
+//    let cp_l = cp.append("g")
+//                .attr("class", "desc_sub")
+//    
+//    const x_meas = {left: "48%", right: "52%"}
+//    
+//    const types = [
+//        {pos: 0, id: "poke_num", name: "pokedex number"},
+//        {pos: 1, id: "type1", name: "primary type"},
+//        {pos: 2, id: "type2", name: "secondary type"},
+//        {pos: 3, id: "height", name: "height [m]"},
+//        {pos: 4, id: "weight", name: "weight [kg]"},
+//        {pos: 5, id: "classif", name: "classification"}
+//    ]
+//    
+//    for (let type of types) {
+//        
+//        let ypos = CP_H*0.5 + type.pos*15
+//        
+//        cp_l.append("text")
+//            .attr("x", x_meas.left)
+//            .attr("y", ypos)
+//            .text(type.name)
+//        
+//        cp_r.append("text")
+//            .attr("x", x_meas.right)
+//            .attr("y", ypos)
+//            .attr("id", type.id)
+//    }
     
     function updateDesc(id) {
         
         let curr_poke = data.filter(d => d.pokedex_number == currentId)[0]
         
-        cp_bg.select("#type1_bg")
+        cp_top.select("#type1_bg")
             .attr("fill", TYPE_COLOR[curr_poke.type1])
         
-        cp_bg.select("#type2_bg")
+        cp_top.select("#type2_bg")
             .attr("fill", TYPE_COLOR[curr_poke.type2])
         
-        cp.select("#desc_name")
+        cp_top.select("#desc_name")
             .text(curr_poke.name)
         
-        cp_r.select("#type")
-            .text(curr_poke.type1 + " / " + curr_poke.type2)
-            .attr("fill", TYPE_COLOR[curr_poke.type1])
-        
-        cp_r.select("#poke_num")
+        cp_top_right.select("#n_pokedex")
             .text(id)
         
-        cp_r.select("#TODO")
-            .text(curr_poke.japanese_name)
+        if (curr_poke.type1 == curr_poke.type2) {
+            cp_top_right.select("#type")
+                .text(curr_poke.type1)  
+        } else {
+            cp_top_right.select("#type")
+                .text(curr_poke.type1 + " / " + curr_poke.type2)  
+        }
         
-        cp_img.attr("href", "data/sprites/" + id + ".png")
+        cp_top_right.select("#classif")
+            .text(curr_poke.classfication)
+        
+//        cp_r.select("#poke_num")
+//            .text(id)
+//        
+//        cp_r.select("#type1")
+//            .text(curr_poke.type1)
+//            .attr("fill", TYPE_COLOR[curr_poke.type1])
+//        
+//        if (curr_poke.type1 == curr_poke.type2) {
+//            cp_r.select("#type2")
+//                .text("^^")
+//                .attr("fill", "red")
+//        } else {
+//            cp_r.select("#type2")
+//                .text(curr_poke.type2)
+//                .attr("fill", TYPE_COLOR[curr_poke.type2])   
+//        }
+//        
+//        cp_r.select("#height")
+//            .text(curr_poke.height_m)
+//        
+//        cp_r.select("#weight")
+//            .text(curr_poke.weight_kg)
+//                
+//        cp_r.select("#classif")
+//            .text(curr_poke.classfication)
+        
+        cp_top_img.attr("href", "data/sprites/" + id + ".png")
         
     }
     
     function initDesc() {
-        cp_bg.select("#bg")
-            .attr("fill", "white")
-        
         updateDesc(currentId)
     }
         
