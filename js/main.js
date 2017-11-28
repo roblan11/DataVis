@@ -1,5 +1,6 @@
 // js.cytoscape.org
 
+
 visuWidth = window.innerWidth || document.body.clientWidth;
 visuHeight = 600;
 
@@ -29,7 +30,7 @@ TYPE_COLOR = {
 }
 
 
-d3.csv("./data/pokemon.csv", function(data) {
+d3.csv("./data/pokemon_1.csv", function(data) {
     
 /****************************************************************************
  ********************************** SEARCH **********************************
@@ -41,6 +42,9 @@ d3.csv("./data/pokemon.csv", function(data) {
 /****************************************************************************
  ********************************* POKE PREVIEW *****************************
  ****************************************************************************/
+
+    let nbPokemon = data.length
+    let nbLevel = nbPokemon/30
     
     let cp = d3.select("#current_pokemon")
             .append("svg")
@@ -108,7 +112,7 @@ d3.csv("./data/pokemon.csv", function(data) {
     
     // TODO add other stats
     
-    function updateDesc(id) {
+    function updateDesc() {
         
         let curr_poke = data.filter(d => d.pokedex_number == currentId)[0]
         
@@ -126,12 +130,12 @@ d3.csv("./data/pokemon.csv", function(data) {
             .attr("fill", TYPE_COLOR[curr_poke.type1])
         
         cp_r.select("#poke_num")
-            .text(id)
+            .text(currentId)
         
         cp_r.select("#TODO")
             .text(curr_poke.japanese_name)
         
-        cp_img.attr("href", "data/sprites/" + id + ".png")
+        cp_img.attr("href", "data/sprites/" + currentId + ".png")
         
     }
     
@@ -149,8 +153,8 @@ d3.csv("./data/pokemon.csv", function(data) {
     let stylesOptionsDefault = {
         'height': 20,
         'width': 20,
-        "background-height": "30%",
-        "background-width": "37%",
+        "background-height": "70%",
+        "background-width": "77%",
         "font-size": "2px",
         "content": "",
         'text-valign': 'bottom',
@@ -176,10 +180,10 @@ d3.csv("./data/pokemon.csv", function(data) {
         style: [
         {
             selector: 'node',
-            style: stylesOptionsDefault,
-            autoungrabify: true
+            style: stylesOptionsDefault
         }
-        ]
+        ],
+        autoungrabify: true
     });
 
 
@@ -198,6 +202,9 @@ d3.csv("./data/pokemon.csv", function(data) {
 
     // init
     function initGraph() {
+
+        let updatedNodes = []
+
         data.forEach(n => {
 
             // You have to have threshold to know the level of the pokemon in the graph
@@ -218,7 +225,7 @@ d3.csv("./data/pokemon.csv", function(data) {
             stylesOptions["background-image"] = "data/sprites/" + n.pokedex_number + ".png";
 
 
-            cy.add({
+            let node = {
                 data: {
                     id : n.pokedex_number,
                     level: l,
@@ -228,24 +235,27 @@ d3.csv("./data/pokemon.csv", function(data) {
                     type2: n.type2
                 }, 
                 style : stylesOptions
-            })
+            }
+            cy.add(node)
 
-        }) 
+        })
+
+        // updatedNodes.forEach(n => {
+        //     cy.add(n)
+        // }) 
 
         cy.layout(concentricOptions).run();
     }
 
 
-    function updateGraph(currentNode){
+    function updateGraph(){
 
-        currentId = currentNode.data("id")
+        let updatedNodes = []
 
         cy.elements().toArray().forEach(n => {
-            let l = 1
             let stylesOptions = stylesOptionsDefault
 
             if (n.data("id") == currentId){
-                l = 0
 
                 stylesOptions = stylesOptionsCurrent
 
@@ -258,9 +268,31 @@ d3.csv("./data/pokemon.csv", function(data) {
             }
             else {
             }
-                n.data("level",l)
-                n.style(stylesOptionsDefault)
+            n.style(stylesOptions)
+
+            let node = {"closeness": 0.5, "id": n.data("id")}
+
+            updatedNodes.push(node)
         })
+
+        // sort 
+        updatedNodes.sort((a,b) => a.closeness < b.closeness)
+
+        // change level depending on array position
+        for(let i = 0; i < updatedNodes.length; i++){
+            
+            let n = updatedNodes[i];
+
+            if(n.id == currentId) {
+                l = 0
+            }
+            else {
+                l = i%nbLevel + 1
+            }
+
+            cy.getElementById(n.id).data("level",l)
+            
+        }
         
     }
 
@@ -296,8 +328,10 @@ d3.csv("./data/pokemon.csv", function(data) {
 
         let node = evt.target;
 
-        updateGraph(node)
-        updateDesc(node.data("id"))
+        currentId = node.data("id")
+
+        updateGraph()
+        updateDesc()
 
         // update graph
         cy.layout(concentricOptions).run();
