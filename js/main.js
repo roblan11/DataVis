@@ -92,7 +92,7 @@ d3.csv("./data/pokemon_1.csv", function(data) {
             .attr("id", r.id)
     }
 
-    const name = {xpos: "96%", ypos: "4%", id: "desc_name"}
+    const name = {xpos: "69%", ypos: CP_H*0.12, id: "desc_name"}
 
     cp_top.append("text")
         .attr("x", name.xpos)
@@ -111,7 +111,7 @@ d3.csv("./data/pokemon_1.csv", function(data) {
             {pos: 1, id: "type", name: "type"},
             {pos: 2, id: "classif", name: "classification"}
         ],
-        xpos : {left: "60%", right: "62%"}
+        xpos : {left: "68%", right: "70%"}
 
     }
 
