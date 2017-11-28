@@ -60,8 +60,8 @@ h1 {
     font-family: monospace;
     font-weight: bold;
     text-transform: uppercase;
-    text-anchor: middle;
-    alignment-baseline: middle;
+    text-anchor: end;
+    alignment-baseline: hanging;
 }
 
 .desc_text {
@@ -75,4 +75,17 @@ h1 {
     font-family: sans-serif;
     font-weight: bold;
     text-anchor: end;
+}
+
+.desc_top_typename {
+    fill: black;
+    font-family: sans-serif;
+    font-weight: bold;
+    text-anchor: end;
+}
+
+.desc_top_typeval {
+    fill: gray;
+    font-family: sans-serif;
+    font-weight: bold;
 }
