@@ -32,7 +32,7 @@ TYPE_COLOR = {
 
 
 
-d3.csv("./data/pokemon.csv", function(data) {
+d3.csv("./data/pokemon_gen1.csv", function(data) {
 
     let heights = data.map(d => d.height_m)
     let rangeHeight = d3.scaleLinear().domain([d3.min(heights), d3.max(heights)]).range([0,1])
