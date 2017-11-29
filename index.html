@@ -9,6 +9,11 @@
   <link rel="stylesheet" type="text/css" href="css/jquery.qtip.min.css">
   <link href="css/styles.css" rel="stylesheet" />
 
+  <link rel="stylesheet" href="chosen/docsupport/style.css">
+  <link rel="stylesheet" href="chosen/docsupport/prism.css">
+  <link rel="stylesheet" href="chosen/chosen.css">
+
+
   <style type="text/css">
 
 
@@ -20,19 +25,34 @@
 
 <body>
 
+  <select class="my_select_box" data-placeholder="Select Your Options">
+    <option value = ""></option>
+    <option value="1">Option 1</option>
+    <option value="2">Option 2</option>
+    <option value="3" disabled>Option 3</option>
+  </select>
+
 <div id="hoverBox"></div>
 
   <div id="cy"></div>
 
   <div id="current_pokemon"></div>
 
-  <div id="search_wrapper">chosen : check sources.txt</div>
-    
+
   <h1>Do we really need this <br> title? <br> also this box is ugly :c --></h1>
 
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script type="text/javascript" src="js/jquery.min.js"></script><script src="js/cytoscape.min.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+<script src="chosen/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+  $('.my_select_box').chosen({
+    allow_single_deselect: true,
+    width: "95%"
+  });
+</script>
 </body>
 </html>

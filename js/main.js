@@ -43,9 +43,31 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 /****************************************************************************
  ********************************** SEARCH **********************************
  ****************************************************************************/
+   let names = data.map(d => d.name)
 
-    // TODO SEARCH POKEMON BY NAME
-    // ? SEARCH OTHER FEATURES
+   //body reference
+   var body = document.getElementsByTagName("body")[0];
+   var div1 = document.createElement('div');
+   div1.setAttribute('id', 'search_wrapper');
+
+   var select = document.createElement("SELECT");
+   select.setAttribute('class', "chosen-select-deselect");
+   select.setAttribute('data-placeholder', "Choose a Pokemon...");
+
+   var option = document.createElement("OPTION");
+   option.value = "";
+   //option.setAttribute('selected', true);
+   select.appendChild(option);
+
+
+   for (var i = 0; i < names.length; i++) {
+     var options = document.createElement("OPTION");
+     options.text = names[i];
+     select.appendChild(options);
+   }
+
+   div1.appendChild(select)
+   document.body.appendChild(div1);
 
 /****************************************************************************
  ********************************* POKE PREVIEW *****************************
@@ -290,7 +312,7 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
             // You have to have threshold to know the level of the pokemon in the graph
 
-            let l = 1; 
+            let l = 1;
             let stylesOptions = {}
             let currentParam = 0
 
@@ -317,7 +339,7 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
                     height: n.height_m,
                     weight: n.weight_kg,
                     classification: n.classfication
-                }, 
+                },
                 style : stylesOptions
             }
             cy.add(node)
@@ -326,7 +348,7 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
         // updatedNodes.forEach(n => {
         //     cy.add(n)
-        // }) 
+        // })
 
         cy.layout(concentricOptions).run();
     }
@@ -357,13 +379,13 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
             // compute closeness
             let closeness = 0
             let currentNode = cy.getElementById(currentId)
-            
+
             let classification = n.data("classification")
             let h = n.data("height")
             let w = n.data("weight")
             let type1 = n.data("type1")
             let type2 = n.data("type2")
-            
+
             let classification_c = currentNode.data("classification")
             let h_c = currentNode.data("height")
             let w_c = currentNode.data("weight")
@@ -388,13 +410,13 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
             updatedNodes.push(node)
         })
 
-        // sort 
+        // sort
         updatedNodes.sort((a,b) => a.closeness > b.closeness)
         console.log(updatedNodes)
 
         // change level depending on array position
         for(let i = 0; i < updatedNodes.length; i++){
-            
+
             let n = updatedNodes[i];
 
             if(n.id == currentId) {
@@ -405,11 +427,11 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
             }
 
             cy.getElementById(n.id).data("level",l)
-            
+
         }
 
         console.log(cy.getElementById(25).data("closeness"))
-        
+
     }
 
 
@@ -453,8 +475,8 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
         cy.layout(concentricOptions).run();
 
     });
-    
+
     initGraph()
     initDesc()
-    
+
 });
