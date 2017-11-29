@@ -44,9 +44,31 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 /****************************************************************************
  ********************************** SEARCH **********************************
  ****************************************************************************/
-
-    // TODO SEARCH POKEMON BY NAME
-    // ? SEARCH OTHER FEATURES
+   
+   let names = data.map(d => d.name)
+   
+   let search = d3.select("#search_wrapper")
+   
+   let select_ = search.append("select")
+   .attr("class", "my_select_box")
+   .attr("data-placeholder", "Choose a Pokemon...")
+   
+   select_.append("option")
+   .attr("value", " ")
+   
+   let val = 1
+   
+   for (let name of names) {
+       select_.append("option")
+       .attr("value", val)
+       .text(name)
+       val++
+   }
+    
+   $('.my_select_box').chosen({
+       allow_single_deselect: true,
+       width: "300%"
+   });
 
 /****************************************************************************
  ********************************* POKE PREVIEW *****************************
@@ -303,7 +325,7 @@ let concentricOptions = {
                     height: n.height_m,
                     weight: n.weight_kg,
                     classification: n.classfication
-                }, 
+                },
                 style : stylesOptions
             }
             cy.add(node)
@@ -458,7 +480,7 @@ let concentricOptions = {
         cy.layout(concentricOptions).run();
 
     });
-    
+
     initGraph()
     initDesc()
     updateGraph()
