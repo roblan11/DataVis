@@ -40,6 +40,20 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
   let weights = data.map(d => d.weight_kg)
   let rangeWeight = d3.scaleLinear().domain([d3.min(weights), d3.max(weights)]).range([0,1])
 
+  let hw_checked = true;
+  let class_checked = true;
+  let types_checked = true;
+
+
+/****************************************************************************
+ ********************************** CHECKBOXES ******************************
+ ****************************************************************************/
+
+
+ $('#hw').on('change', function() {  hw_checked = this.checked ; updateGraph() });
+ $('#types').on('change', function() {  types_checked = this.checked ; updateGraph() });
+ $('#classification').on('change', function() {  class_checked = this.checked ; updateGraph() });
+
 
 /****************************************************************************
  ********************************** SEARCH **********************************
@@ -71,6 +85,24 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
  });
 
 
+ $('.my_select_box').on('change', function(evt, params) {
+
+  zoomToId(parseInt(params.selected))
+});
+
+
+ function zoomToId(id){
+
+  let node = cy.getElementById(id)
+  let pos = node.position()
+  cy.animate({
+    zoom: 4,
+    center: {
+      eles: node
+    }
+  })
+
+}
 /****************************************************************************
  ********************************* POKE PREVIEW *****************************
  ****************************************************************************/
@@ -293,6 +325,7 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
 
 
+
     let concentricOptions = {
       name: 'concentric',
       concentric: function(node) {
@@ -346,31 +379,33 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
             let closeness = 5
             let currentNode = cy.getElementById(currentId)
 
-            let classification = n.data("classification").split("@@")
-            let h = n.data("height")
-            let w = n.data("weight")
-            let type1 = n.data("type1")
-            let type2 = n.data("type2")
-
-            let classification_c = currentNode.data("classification").split("@@")
-            let h_c = currentNode.data("height")
-            let w_c = currentNode.data("weight")
-            let type1_c = currentNode.data("type1")
-            let type2_c = currentNode.data("type2")
-
-
-            classification.forEach(c=>{
-              classification_c.forEach(c1 => {
-                closeness += (c == c1) ? 1 : 0
+            if(class_checked) {
+              let classification = n.data("classification").split("@@")
+              let classification_c = currentNode.data("classification").split("@@")
+              classification.forEach(c=>{
+                classification_c.forEach(c1 => {
+                  closeness += (c == c1) ? 1 : 0
+                })
               })
-            })
+            }
 
-            closeness -= rangeHeight(Math.abs(h_c - h))
-            closeness -= rangeWeight(Math.abs(w_c - w))
+            if(hw_checked){
+              let h = n.data("height")
+              let w = n.data("weight")
+              let h_c = currentNode.data("height")
+              let w_c = currentNode.data("weight")
+              closeness -= rangeHeight(Math.abs(h_c - h))
+              closeness -= rangeWeight(Math.abs(w_c - w))
+            }
 
-            closeness += (type1 == type1_c || type1 == type2_c) ? 0.5 : 0
-            closeness += (type2 == type1_c || type2 == type2_c) ? 0.5 : 0
-
+            if(types_checked){
+              let type1 = n.data("type1")
+              let type2 = n.data("type2")
+              let type1_c = currentNode.data("type1")
+              let type2_c = currentNode.data("type2")
+              closeness += (type1 == type1_c || type1 == type2_c) ? 0.5 : 0
+              closeness += (type2 == type1_c || type2 == type2_c) ? 0.5 : 0
+            }
 
             n.data("closeness", closeness)
 
@@ -436,6 +471,9 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
         }
 
+        
+        cy.layout(concentricOptions).run();
+
       }
 
 
@@ -484,36 +522,18 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
       });
 
+
+
     initGraph()
     initDesc()
     updateGraph()
-    cy.layout(concentricOptions).run();
     cy.animate({
-        zoom: {
-          level:4,
-          position: {x:visuWidth/2, y:visuHeight/2 + 20}
-        }
-      })
+      zoom: {
+        level:4,
+        position: {x:visuWidth/2, y:visuHeight/2 + 20}
+      }
+    })
 
 
-    $('.my_select_box').on('change', function(evt, params) {
-
-      zoomToId(parseInt(params.selected))
-    });
-
-
-    function zoomToId(id){
-
-      let node = cy.getElementById(id)
-      let pos = node.position()
-      cy.animate({
-        zoom: 4,
-        center: {
-          eles: node
-        }
-      })
-
-
-    }
     
   });
