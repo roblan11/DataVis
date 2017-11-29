@@ -40,6 +40,7 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
     let weights = data.map(d => d.weight_kg)
     let rangeWeight = d3.scaleLinear().domain([d3.min(weights), d3.max(weights)]).range([0,1])
 
+
 /****************************************************************************
  ********************************** SEARCH **********************************
  ****************************************************************************/
@@ -73,255 +74,242 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
  ********************************* POKE PREVIEW *****************************
  ****************************************************************************/
 
-    let nbPokemon = data.length
-    let nbLevel = nbPokemon/10
+ let nbPokemon = data.length
+ let nbLevel = nbPokemon/15
 
     /* DATA ENTRIES TO SHOW
        name / pokedex_number
        type1 / type2
        height_m / weight_kg
        classification
-     */
+       */
 
-    let cp = d3.select("#current_pokemon")
-            .append("svg")
-            .attr("height", "100%")
-            .attr("width", "100%")
+       let cp = d3.select("#current_pokemon")
+       .append("svg")
+       .attr("height", "100%")
+       .attr("width", "100%")
 
-    cp.append("rect")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", "100%")
-            .attr("height", "100%")
-            .attr("fill", "white")
+       const CP_W = d3.select("#current_pokemon").node().getBoundingClientRect().width
+       const CP_H = d3.select("#current_pokemon").node().getBoundingClientRect().height
+       
+       const topbar_pos = {
+           left: {
+               xpos: 0, 
+               width: 0.495*CP_W, 
+               height: 0.4*CP_H, 
+               margin: 0.02*CP_H, 
+               id: "l_"
+           },
+           right: {
+               xpos: 0.505*CP_W, 
+               width: 0.495*CP_W, 
+               height: 0.4*CP_H, 
+               margin: 0.02*CP_H, 
+               id: "r_"
+           }
+       }
+       
+       const topbar_attributes = [
+           {pos: 0, id: "type", name: "type"},
+           {pos: 1, id: "classif", name: "classification"}
+       ]
+       
+       let cp_center = cp.append("g")
+       let cp_hover = cp.append("g")
+       
+       function initTopBar (group, position) {
+           let background = group.append("g")
+           
+           background.append("rect")
+           .attr("x", position.xpos)
+           .attr("y", 0)
+           .attr("width", position.width)
+           .attr("height", position.height)
+           .attr("id", position.id + "type2_bg")
+           
+           const image_size = position.height - 2*position.margin
+           
+           let xcenter = 0
+           
+           if (position.id == "l_") {
+               background.append("rect")
+               .attr("x", position.xpos)
+               .attr("y", position.margin)
+               .attr("width", position.width - position.margin)
+               .attr("height", position.height - 2*position.margin)
+               .attr("id", position.id + "type1_bg")
+               
+               group.append("image")
+               .attr("x", position.xpos + position.margin)
+               .attr("y", position.margin)
+               .attr("width", image_size)
+               .attr("height", image_size)
+               .attr("id", position.id + "top_img")
+               
+               group.append("text")
+               .attr("x", position.xpos + 2*position.margin + image_size)
+               .attr("y", position.margin + 20)
+               .attr("id", position.id + "n_pokedex")
+               
+               xcenter = ((position.xpos + image_size) + (position.xpos + position.width)) / 2
+           } else {
+               background.append("rect")
+               .attr("x", position.xpos + position.margin)
+               .attr("y", position.margin)
+               .attr("width", position.width - position.margin)
+               .attr("height", position.height - 2*position.margin)
+               .attr("id", position.id + "type1_bg")
+               
+               group.append("image")
+               .attr("x", position.xpos + position.width - position.margin - image_size)
+               .attr("y", position.margin)
+               .attr("width", image_size)
+               .attr("height", image_size)
+               .attr("id", position.id + "top_img")
+               
+               group.append("text")
+               .attr("x", position.xpos + position.width - 2*position.margin - image_size)
+               .attr("y", position.margin + 20)
+               .attr("id", position.id + "n_pokedex")
+               
+               xcenter = (position.xpos + (position.xpos + position.width - image_size)) / 2
+           }
+           
+           group.append("text")
+           .attr("x", xcenter)
+           .attr("y", position.margin + 30)
+           .attr("class", "desc_name")
+           .attr("id", position.id + "desc_name")
+           
+           let attributes = group.append("g")
+           
+           let attrs_typename = attributes.append("g").attr("class", "desc_top_typename")
+           let attrs_typeval = attributes.append("g").attr("class", "desc_top_typeval")
+           
+           for (let att of topbar_attributes) {
+               const ypos = position.margin + 50 + att.pos*15
+               
+               attrs_typename.append("text")
+               .attr("x", xcenter - position.margin)
+               .attr("y", ypos)
+               .text(att.name)
 
-    const CP_W = d3.select("#current_pokemon").node().getBoundingClientRect().width
-    const CP_H = d3.select("#current_pokemon").node().getBoundingClientRect().height
+               attrs_typeval.append("text")
+               .attr("x", xcenter + position.margin)
+               .attr("y", ypos)
+               .attr("id", position.id + att.id)
+           }
+       }
+    
+       function updateTopBar (group, position, pokemon) {
+           group.select("#" + position.id + "type2_bg")
+           .attr("fill", TYPE_COLOR[pokemon.type2])
+           
+           group.select("#" + position.id + "type1_bg")
+           .attr("fill", TYPE_COLOR[pokemon.type1])
+           
+           group.select("#" + position.id + "top_img")
+           .attr("href", "data/sprites/" + pokemon.pokedex_number + ".png")
+           
+           group.select("#" + position.id + "desc_name")
+           .text(pokemon.name)
+           
+           group.select("#" + position.id + "n_pokedex")
+           .text(pokemon.pokedex_number)
+       
+           if (pokemon.type1 == pokemon.type2) {
+               group.select("#" + position.id + "type")
+               .text(pokemon.type1)
+           } else {
+               group.select("#" + position.id + "type")
+               .text(pokemon.type1 + " / " + pokemon.type2)
+           }
+       
+           group.select("#" + position.id + "classif")
+           .text(pokemon.classfication.replace("@@", ", "))
+       }
 
-    const top_rect = [
-        {xpos: "0%", ypos:  "0%", width: "100%", height:  "40%", id: "type2_bg"},
-        {xpos: "2%", ypos:  "2%", width:  "96%", height:  "36%", id: "type1_bg"}
-    ]
-
-    let cp_top = cp.append("g");
-
-    for (let r of top_rect) {
-        cp_top.append("rect")
-            .attr("x", r.xpos)
-            .attr("y", r.ypos)
-            .attr("width", r.width)
-            .attr("height", r.height)
-            .attr("id", r.id)
-    }
-
-    const name = {xpos: "69%", ypos: CP_H*0.12, id: "desc_name"}
-
-    cp_top.append("text")
-        .attr("x", name.xpos)
-        .attr("y", name.ypos)
-        .attr("id", name.id)
-
-    let cp_top_img = cp_top.append("image")
-                    .attr("x", "2%")
-                    .attr("y", "2%")
-                    .attr("width", "36%")
-                    .attr("height", "36%")
-
-    const top_desc = {
-        txt : [
-            {pos: 0, id: "n_pokedex", name: "number"},
-            {pos: 1, id: "type", name: "type"},
-            {pos: 2, id: "classif", name: "classification"}
-        ],
-        xpos : {left: "68%", right: "70%"}
-
-    }
-
-    let cp_top_left = cp.append("g").attr("class", "desc_top_typename");
-    let cp_top_right = cp.append("g").attr("class", "desc_top_typeval");
-
-    for (let d of top_desc.txt) {
-        let ypos = CP_H*0.2 + d.pos*15
-
-        cp_top_left.append("text")
-            .attr("x", top_desc.xpos.left)
-            .attr("y", ypos)
-            .text(d.name)
-
-        cp_top_right.append("text")
-            .attr("x", top_desc.xpos.right)
-            .attr("y", ypos)
-            .attr("id", d.id)
-    }
-
-    // --------------------------------------------------------------------------
-
-//    let cp_bottom = cp.append("g")
-//                .attr("class", "desc_text")
-//
-//    let cp_l = cp.append("g")
-//                .attr("class", "desc_sub")
-//
-//    const x_meas = {left: "48%", right: "52%"}
-//
-//    const types = [
-//        {pos: 0, id: "poke_num", name: "pokedex number"},
-//        {pos: 1, id: "type1", name: "primary type"},
-//        {pos: 2, id: "type2", name: "secondary type"},
-//        {pos: 3, id: "height", name: "height [m]"},
-//        {pos: 4, id: "weight", name: "weight [kg]"},
-//        {pos: 5, id: "classif", name: "classification"}
-//    ]
-//
-//    for (let type of types) {
-//
-//        let ypos = CP_H*0.5 + type.pos*15
-//
-//        cp_l.append("text")
-//            .attr("x", x_meas.left)
-//            .attr("y", ypos)
-//            .text(type.name)
-//
-//        cp_r.append("text")
-//            .attr("x", x_meas.right)
-//            .attr("y", ypos)
-//            .attr("id", type.id)
-//    }
-
-    function updateDesc() {
-
-        let curr_poke = data.filter(d => d.pokedex_number == currentId)[0]
-
-        cp_top.select("#type1_bg")
-            .attr("fill", TYPE_COLOR[curr_poke.type1])
-
-        cp_top.select("#type2_bg")
-            .attr("fill", TYPE_COLOR[curr_poke.type2])
-
-        cp_top.select("#desc_name")
-            .text(curr_poke.name)
-
-        cp_top_right.select("#n_pokedex")
-            .text(currentId)
-
-        if (curr_poke.type1 == curr_poke.type2) {
-            cp_top_right.select("#type")
-                .text(curr_poke.type1)
-        } else {
-            cp_top_right.select("#type")
-                .text(curr_poke.type1 + " / " + curr_poke.type2)
-        }
-
-        cp_top_right.select("#classif")
-            .text(curr_poke.classfication)
-
-//        cp_r.select("#poke_num")
-//            .text(id)
-//
-//        cp_r.select("#type1")
-//            .text(curr_poke.type1)
-//            .attr("fill", TYPE_COLOR[curr_poke.type1])
-//
-//        if (curr_poke.type1 == curr_poke.type2) {
-//            cp_r.select("#type2")
-//                .text("^^")
-//                .attr("fill", "red")
-//        } else {
-//            cp_r.select("#type2")
-//                .text(curr_poke.type2)
-//                .attr("fill", TYPE_COLOR[curr_poke.type2])
-//        }
-//
-//        cp_r.select("#height")
-//            .text(curr_poke.height_m)
-//
-//        cp_r.select("#weight")
-//            .text(curr_poke.weight_kg)
-//
-//        cp_r.select("#classif")
-//            .text(curr_poke.classfication)
-
-        cp_top_img.attr("href", "data/sprites/" + currentId + ".png")
-
-    }
-
-    function initDesc() {
-        updateDesc(currentId)
-    }
+       function updateDesc () {
+           let curr_poke = data.filter(d => d.pokedex_number == currentId)[0]
+           
+           updateTopBar(cp_center, topbar_pos.right, curr_poke)
+       }
+    
+       function hoverDesc (dex_num) {
+           let hover_poke = data.filter(d => d.pokedex_number == dex_num)[0]
+           
+           updateTopBar(cp_hover, topbar_pos.left, hover_poke)
+       }
+       
+       function initDesc () {
+           initTopBar(cp_center, topbar_pos.right)
+           initTopBar(cp_hover, topbar_pos.left)
+           updateDesc()
+       }
 
 /****************************************************************************
  ******************************** CYTOSCAPE GRAPH ***************************
  ****************************************************************************/
 
-    let stylesOptionsDefault = {
-        'height': 20,
-        'width': 20,
-        "background-height": "70%",
-        "background-width": "77%",
-        "font-size": "2px",
-        "content": "",
-        'text-valign': 'bottom',
-        'text-halign': 'center',
-        "text-transform": "uppercase"
+    // TODO actually diable text rather than setting its size to 0...
+    
+ let stylesOptionsDefault = {
+    'height': 20,
+    'width': 20,
+    "background-height": "80%",
+    "background-width": "87%",
+    "font-size": "0px",
+    "content": "",
+    'text-valign': 'bottom',
+    'text-halign': 'center',
+    "text-transform": "uppercase",
+    "border-width": 4
+}
+
+let stylesOptionsCurrent = {
+    "font-size": "0px",
+    "width":40,
+    "height":40
+}
+
+let stylesHover = {
+    "width":40,
+    "height":40
+}
+
+
+let cy = cytoscape({
+    container: document.getElementById('cy'),
+
+    style: [
+    {
+        selector: 'node',
+        style: stylesOptionsDefault
     }
-
-    let stylesOptionsCurrent = {
-        "font-size": "3px",
-        "width":30,
-        "height":30
-    }
-
-    let stylesHover = {
-        "width":30,
-        "height":30
-    }
-
-
-    let cy = cytoscape({
-        container: document.getElementById('cy'),
-
-        style: [
-        {
-            selector: 'node',
-            style: stylesOptionsDefault
-        }
-        ],
-        autoungrabify: true
-    });
+    ],
+    autoungrabify: true
+});
 
 
 
-    let concentricOptions = {
-        name: 'concentric',
-        concentric: function(node) {
-            return 10 - node.data('level');
-        },
-        levelWidth: function() {
-            return 1;
-        },
-        animate: true
-    };
+let concentricOptions = {
+    name: 'concentric',
+    concentric: function(node) {
+        return 10 - node.data('level');
+    },
+    levelWidth: function() {
+        return 1;
+    },
+    animate: true
+};
 
 
     // init
     function initGraph() {
 
-        let updatedNodes = []
-
         data.forEach(n => {
 
-            // You have to have threshold to know the level of the pokemon in the graph
-
-            let l = 1;
             let stylesOptions = {}
-            let currentParam = 0
-
-            if (n.pokedex_number == 25) {
-                l = 0
-                currentParam = 1
-                stylesOptionsCurrent["content"] = n.name
-                stylesOptions = stylesOptionsCurrent
-            }
 
             stylesOptions["background-color"] = TYPE_COLOR[n.type1];
             stylesOptions["border-color"] = TYPE_COLOR[n.type2];
@@ -331,8 +319,6 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
             let node = {
                 data: {
                     id : n.pokedex_number,
-                    level: l,
-                    current: currentParam,
                     name: n.name,
                     type1 : n.type1,
                     type2: n.type2,
@@ -346,61 +332,41 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
         })
 
-        // updatedNodes.forEach(n => {
-        //     cy.add(n)
-        // })
-
-        cy.layout(concentricOptions).run();
     }
 
 
-    function updateGraph(){
-
+    function computeCloseness(){
         let updatedNodes = []
 
         cy.elements().toArray().forEach(n => {
-            let stylesOptions = stylesOptionsDefault
-
-            if (n.data("id") == currentId){
-
-                stylesOptions = stylesOptionsCurrent
-
-                stylesOptions["content"] = n.data("name");
-                stylesOptions["background-color"] = TYPE_COLOR[n.data("type1")];
-                stylesOptions["border-color"] = TYPE_COLOR[n.data("type2")];
-                stylesOptions["background-image"] = "data/sprites/" + n.data("id") + ".png";
-
-
-            }
-            else {
-            }
-            n.style(stylesOptions)
-
             // compute closeness
-            let closeness = 0
+            let closeness = 5
             let currentNode = cy.getElementById(currentId)
 
-            let classification = n.data("classification")
+            let classification = n.data("classification").split("@@")
             let h = n.data("height")
             let w = n.data("weight")
             let type1 = n.data("type1")
             let type2 = n.data("type2")
 
-            let classification_c = currentNode.data("classification")
+            let classification_c = currentNode.data("classification").split("@@")
             let h_c = currentNode.data("height")
             let w_c = currentNode.data("weight")
             let type1_c = currentNode.data("type1")
             let type2_c = currentNode.data("type2")
 
 
-            /*classification.forEach(c=>{
+            classification.forEach(c=>{
                 classification_c.forEach(c1 => {
-                    closeness += (c == c1) ? 0.5 : 0
+                    closeness += (c == c1) ? 1 : 0
                 })
-            })*/
+            })
 
             closeness -= rangeHeight(Math.abs(h_c - h))
             closeness -= rangeWeight(Math.abs(w_c - w))
+
+            closeness += (type1 == type1_c || type1 == type2_c) ? 0.5 : 0
+            closeness += (type2 == type1_c || type2 == type2_c) ? 0.5 : 0
 
 
             n.data("closeness", closeness)
@@ -410,28 +376,65 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
             updatedNodes.push(node)
         })
 
-        // sort
-        updatedNodes.sort((a,b) => a.closeness > b.closeness)
+        updatedNodes = updatedNodes.sort((a,b) => b.closeness - a.closeness)
+
         console.log(updatedNodes)
+
+        return updatedNodes
+    }
+
+
+    function computeLevelRange(updatedNodes){
+        let closeness_min = updatedNodes[updatedNodes.length-1].closeness
+        let closeness_max = updatedNodes[0].closeness
+
+        //let rangeLevel = d3.scaleLinear().domain([closeness_max, closeness_min]).range([1,nbLevel])
+
+        let rangeLevel = d3.scalePow().domain([0, nbPokemon-1]).range([1,nbLevel]).interpolate(d3.interpolateRound);
+        return rangeLevel
+    }
+
+
+    function updateGraph(){
+
+        console.log("update graph with current : " + currentId)
+
+        let updatedNodes = computeCloseness()
+
+        // sort 
+        let rangeLevel = computeLevelRange(updatedNodes)
+
 
         // change level depending on array position
         for(let i = 0; i < updatedNodes.length; i++){
 
             let n = updatedNodes[i];
+            let node = cy.getElementById(n.id)
+            let stylesOptions = stylesOptionsDefault
 
             if(n.id == currentId) {
                 l = 0
+                stylesOptions = stylesOptionsCurrent
+
+                stylesOptions["content"] = node.data("name");
+                stylesOptions["background-color"] = TYPE_COLOR[node.data("type1")];
+                stylesOptions["border-color"] = TYPE_COLOR[node.data("type2")];
+                stylesOptions["background-image"] = "data/sprites/" + n.id + ".png";
+
             }
             else {
-                l = i%nbLevel + 1
+             /*   let cl = node.data("closeness")
+                l = Math.round(rangeLevel(cl))
+                console.log(l)*/
+
+                l = rangeLevel(i)
             }
 
-            cy.getElementById(n.id).data("level",l)
-
+            node.style(stylesOptions)
+            node.data("level",l)
+            
         }
-
-        console.log(cy.getElementById(25).data("closeness"))
-
+        
     }
 
 
@@ -442,6 +445,8 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
         stylesHover['content'] = node.data("name");
         node.style(stylesHover)
+        
+        hoverDesc(node.data("id"))
 
     });
 
@@ -478,5 +483,7 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
     initGraph()
     initDesc()
-
+    updateGraph()
+    cy.layout(concentricOptions).run();
+    
 });
