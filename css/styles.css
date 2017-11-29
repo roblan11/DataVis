@@ -20,7 +20,7 @@ h1 {
 
 #cy {
 	width: 100%;
-	height: 100%;
+	height: 80%;
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -36,31 +36,33 @@ h1 {
 }
 
 #current_pokemon {
-	width:200px;
-	height:200px;
+	width:100%;
+	height:20%;
 	position: absolute;
-	bottom:3%;
-	right:3%;
-	background:grey;
+	bottom: 0;
+	left: 0;
 }
 
-#hoverBox {
-	width:100px;
-	height:100px;
-	background:red;
-	display:block;
-	position: absolute;
-	right: 100px;
-	top:100px;
-}
-
-#desc_name {
+.desc_name {
     fill: white;
-    font-size: 200%;
+    font-size: 30px;
     font-family: monospace;
     font-weight: bold;
     text-transform: uppercase;
     text-anchor: middle;
+}
+
+#r_n_pokedex {
+    fill: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-anchor: end;
+}
+
+#l_n_pokedex {
+    fill: white;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .desc_text {
@@ -84,7 +86,7 @@ h1 {
 }
 
 .desc_top_typeval {
-    fill: gray;
+    fill: black;
     font-family: sans-serif;
     font-weight: bold;
 }
