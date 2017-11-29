@@ -43,31 +43,31 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 /****************************************************************************
  ********************************** SEARCH **********************************
  ****************************************************************************/
+   
    let names = data.map(d => d.name)
-
-   //body reference
-   var body = document.getElementsByTagName("body")[0];
-   var div1 = document.createElement('div');
-   div1.setAttribute('id', 'search_wrapper');
-
-   var select = document.createElement("SELECT");
-   select.setAttribute('class', "chosen-select-deselect");
-   select.setAttribute('data-placeholder', "Choose a Pokemon...");
-
-   var option = document.createElement("OPTION");
-   option.value = "";
-   //option.setAttribute('selected', true);
-   select.appendChild(option);
-
-
-   for (var i = 0; i < names.length; i++) {
-     var options = document.createElement("OPTION");
-     options.text = names[i];
-     select.appendChild(options);
+   
+   let search = d3.select("#search_wrapper")
+   
+   let select_ = search.append("select")
+   .attr("class", "my_select_box")
+   .attr("data-placeholder", "Choose a Pokemon...")
+   
+   select_.append("option")
+   .attr("value", " ")
+   
+   let val = 1
+   
+   for (let name of names) {
+       select_.append("option")
+       .attr("value", val)
+       .text(name)
+       val++
    }
-
-   div1.appendChild(select)
-   document.body.appendChild(div1);
+    
+   $('.my_select_box').chosen({
+       allow_single_deselect: true,
+       width: "300%"
+   });
 
 /****************************************************************************
  ********************************* POKE PREVIEW *****************************
