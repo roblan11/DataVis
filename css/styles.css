@@ -48,7 +48,7 @@ h1 {
 
 .desc_name {
     fill: white;
-    font-size: 30px;
+/*    font-size: 250%;*/
     font-family: monospace;
     font-weight: bold;
     text-transform: uppercase;
@@ -57,14 +57,14 @@ h1 {
 
 #r_n_pokedex {
     fill: white;
-    font-size: 20px;
+/*    font-size: 150%;*/
     font-weight: bold;
     text-anchor: end;
 }
 
 #l_n_pokedex {
     fill: white;
-    font-size: 20px;
+/*    font-size: 150%;*/
     font-weight: bold;
 }
 
@@ -99,4 +99,26 @@ h1 {
 	top:3%;
 	left:3%;
 	font-size: 1.2em;
+}
+
+#butterfly_chart rect {
+    fill: gray;
+}
+
+#butterfly_chart_attrs {
+    fill: gray;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+#butterfly_chart_left {
+    fill: black;
+    font-weight: bold;
+    text-anchor: end;
+}
+
+#butterfly_chart_right {
+    fill: black;
+    font-weight: bold;
+    text-anchor: start;
 }
