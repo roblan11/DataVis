@@ -34,15 +34,33 @@ TYPE_COLOR = {
 
 d3.csv("./data/pokemon_gen1.csv", function(data) {
 
-  let heights = data.map(d => d.height_m)
-  let rangeHeight = d3.scaleLinear().domain([d3.min(heights), d3.max(heights)]).range([0,1])
+  data
+    
+  let heights = data.map(d => +d.height_m)
+  let rangeHeight = d3.scaleLinear().domain([0, d3.max(heights)]).range([0,1])
 
-  let weights = data.map(d => d.weight_kg)
-  let rangeWeight = d3.scaleLinear().domain([d3.min(weights), d3.max(weights)]).range([0,1])
+  let weights = data.map(d => +d.weight_kg)
+  let rangeWeight = d3.scaleLinear().domain([0, d3.max(weights)]).range([0,1])
+  
+  let attacks = data.map(d => +d.attack)
+  let rangeAttack = d3.scaleLinear().domain([0, d3.max(attacks)]).range([0,1])
+   
+  let defenses = data.map(d => +d.defense)
+  let rangeDefense = d3.scaleLinear().domain([0, d3.max(defenses)]).range([0,1])
+  
+  let hps = data.map(d => +d.hp)
+  let rangeHP = d3.scaleLinear().domain([0, d3.max(hps)]).range([0,1])
+  
+  let speeds = data.map(d => +d.speed)
+  let rangeSpeed = d3.scaleLinear().domain([0, d3.max(speeds)]).range([0,1])
 
+  let speed_checked = true;
+  let hp_checked = true;
+  let ad_checked = true;
   let hw_checked = true;
   let class_checked = true;
   let types_checked = true;
+
 
 
 /****************************************************************************
@@ -50,6 +68,9 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
  ****************************************************************************/
 
 
+ $('#speed').on('change', function() {  speed_checked = this.checked ; updateGraph() });
+ $('#hp').on('change', function() {  hp_checked = this.checked ; updateGraph() });
+ $('#ad').on('change', function() {  ad_checked = this.checked ; updateGraph() });
  $('#hw').on('change', function() {  hw_checked = this.checked ; updateGraph() });
  $('#types').on('change', function() {  types_checked = this.checked ; updateGraph() });
  $('#classification').on('change', function() {  class_checked = this.checked ; updateGraph() });
@@ -116,6 +137,8 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
        height_m / weight_kg
        classification
        */
+ 
+ // GENERAL DEFINITIONS AND CONSTANTS -----------------------------------------------
 
        let cp = d3.select("#current_pokemon")
        .append("svg")
@@ -125,21 +148,28 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
        const CP_W = d3.select("#current_pokemon").node().getBoundingClientRect().width
        const CP_H = d3.select("#current_pokemon").node().getBoundingClientRect().height
        
+ // TOPBAR --------------------------------------------------------------------------
+       
        const topbar_pos = {
          left: {
            xpos: 0, 
-           width: 0.495*CP_W, 
-           height: 0.4*CP_H, 
-           margin: 0.02*CP_H, 
            id: "l_"
          },
          right: {
            xpos: 0.505*CP_W, 
+           id: "r_"
+         },
+         general: {
            width: 0.495*CP_W, 
            height: 0.4*CP_H, 
-           margin: 0.02*CP_H, 
-           id: "r_"
+           margin: 0.02*CP_H
+         },
+         text: {
+             name_font_size: 0.12*CP_H,
+             text_font_size: 0.06*CP_H,
+             n_pokedex_font_size: 0.06*CP_H
          }
+         
        }
        
        const topbar_attributes = [
@@ -156,63 +186,68 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
          background.append("rect")
          .attr("x", position.xpos)
          .attr("y", 0)
-         .attr("width", position.width)
-         .attr("height", position.height)
+         .attr("width", topbar_pos.general.width)
+         .attr("height", topbar_pos.general.height)
          .attr("id", position.id + "type2_bg")
 
-         const image_size = position.height - 2*position.margin
+         const image_size = topbar_pos.general.height - 2*topbar_pos.general.margin
 
          let xcenter = 0
 
          if (position.id == "l_") {
            background.append("rect")
            .attr("x", position.xpos)
-           .attr("y", position.margin)
-           .attr("width", position.width - position.margin)
-           .attr("height", position.height - 2*position.margin)
+           .attr("y", topbar_pos.general.margin)
+           .attr("width", topbar_pos.general.width - topbar_pos.general.margin)
+           .attr("height", topbar_pos.general.height - 2*topbar_pos.general.margin)
            .attr("id", position.id + "type1_bg")
 
            group.append("image")
-           .attr("x", position.xpos + position.margin)
-           .attr("y", position.margin)
+           .attr("x", position.xpos + topbar_pos.general.margin)
+           .attr("y", topbar_pos.general.margin)
            .attr("width", image_size)
            .attr("height", image_size)
            .attr("id", position.id + "top_img")
 
            group.append("text")
-           .attr("x", position.xpos + 2*position.margin + image_size)
-           .attr("y", position.margin + 20)
+           .attr("x", position.xpos + 2*topbar_pos.general.margin + image_size)
+           .attr("y", topbar_pos.general.margin + 20)
            .attr("id", position.id + "n_pokedex")
+           .style("font-size", topbar_pos.text.n_pokedex_font_size)
 
-           xcenter = ((position.xpos + image_size) + (position.xpos + position.width)) / 2
+           xcenter = ((position.xpos + image_size) + (position.xpos + topbar_pos.general.width)) / 2
+           
          } else {
+             
            background.append("rect")
-           .attr("x", position.xpos + position.margin)
-           .attr("y", position.margin)
-           .attr("width", position.width - position.margin)
-           .attr("height", position.height - 2*position.margin)
+           .attr("x", position.xpos + topbar_pos.general.margin)
+           .attr("y", topbar_pos.general.margin)
+           .attr("width", topbar_pos.general.width - topbar_pos.general.margin)
+           .attr("height", topbar_pos.general.height - 2*topbar_pos.general.margin)
            .attr("id", position.id + "type1_bg")
 
            group.append("image")
-           .attr("x", position.xpos + position.width - position.margin - image_size)
-           .attr("y", position.margin)
+           .attr("x", position.xpos + topbar_pos.general.width - topbar_pos.general.margin - image_size)
+           .attr("y", topbar_pos.general.margin)
            .attr("width", image_size)
            .attr("height", image_size)
            .attr("id", position.id + "top_img")
 
            group.append("text")
-           .attr("x", position.xpos + position.width - 2*position.margin - image_size)
-           .attr("y", position.margin + 20)
+           .attr("x", position.xpos + topbar_pos.general.width - 2*topbar_pos.general.margin - image_size)
+           .attr("y", topbar_pos.general.margin + 20)
            .attr("id", position.id + "n_pokedex")
+           .style("font-size", topbar_pos.text.n_pokedex_font_size)
 
-           xcenter = (position.xpos + (position.xpos + position.width - image_size)) / 2
+           xcenter = (position.xpos + (position.xpos + topbar_pos.general.width - image_size)) / 2
          }
 
          group.append("text")
          .attr("x", xcenter)
-         .attr("y", position.margin + 30)
+         .attr("y", topbar_pos.general.margin*2 + topbar_pos.text.name_font_size)
          .attr("class", "desc_name")
          .attr("id", position.id + "desc_name")
+         .style("font-size", topbar_pos.text.name_font_size)
 
          let attributes = group.append("g")
 
@@ -220,17 +255,19 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
          let attrs_typeval = attributes.append("g").attr("class", "desc_top_typeval")
 
          for (let att of topbar_attributes) {
-           const ypos = position.margin + 50 + att.pos*15
+           const ypos = CP_H*0.25 + att.pos*(topbar_pos.text.text_font_size + topbar_pos.general.margin)
 
            attrs_typename.append("text")
-           .attr("x", xcenter - position.margin)
+           .attr("x", xcenter - topbar_pos.general.margin)
            .attr("y", ypos)
+           .style("font-size", topbar_pos.text.text_font_size)
            .text(att.name)
 
            attrs_typeval.append("text")
-           .attr("x", xcenter + position.margin)
+           .attr("x", xcenter + topbar_pos.general.margin)
            .attr("y", ypos)
            .attr("id", position.id + att.id)
+           .style("font-size", topbar_pos.text.text_font_size)
          }
        }
 
@@ -261,22 +298,227 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
          group.select("#" + position.id + "classif")
          .text(pokemon.classfication.replace("@@", ", "))
        }
+    
+// BUTTERFLY CHART -----------------------------------------------------------------
 
+       let cp_chart = cp.append("g").attr("id", "butterfly_chart")
+       let cp_chart_hover = cp_chart.append("g").attr("id", "butterfly_chart_left")
+       let cp_chart_center = cp_chart.append("g").attr("id", "butterfly_chart_right")
+       let cp_chart_attrs = cp_chart.append("g").attr("id", "butterfly_chart_attrs")
+    
+       const chart_pos = {
+           left: {
+             xpos: 0.45*CP_W, 
+             id: "l_"
+           },
+           right: {
+             xpos: 0.55*CP_W, 
+             id: "r_"
+           },
+           general: {
+             bar_width: 0.3*CP_W, 
+             bar_height: 0.08*CP_H, 
+             bar_margin: 0.02*CP_H
+           },
+           text: {
+             font_size: 0.06*CP_H,
+             font_margin: 0.01*CP_W
+           },
+           transition: {
+               duration: 500
+           }
+         
+       }
+       
+       const chart_attributes = [
+           {pos: 0, id: "height", name: "height"},
+           {pos: 1, id: "weight", name: "weight"},
+           {pos: 2, id: "attack", name: "attack"},
+           {pos: 3, id: "defense", name: "defense"},
+           {pos: 4, id: "hp", name: "HP"},
+           {pos: 5, id: "speed", name: "speed"}
+       ]
+    
+       function initChart () {
+           for (let att of chart_attributes) {
+               const ypos = CP_H*0.4 + chart_pos.general.bar_margin*0.5 + att.pos*(chart_pos.general.bar_margin + chart_pos.general.bar_height) 
+               
+               cp_chart_attrs.append("text")
+               .attr("x", 0.5*CP_W)
+               .attr("y", ypos + chart_pos.text.font_size)
+               .style("font-size", chart_pos.text.font_size)
+               .text(att.name)
+               
+               cp_chart_hover.append("rect")
+               .attr("x", chart_pos.left.xpos)
+               .attr("y", ypos)
+               .attr("width", 0)
+               .attr("height", chart_pos.general.bar_height)
+               .attr("id", chart_pos.left.id + att.id + "_rect")
+               
+               cp_chart_hover.append("text")
+               .attr("x", chart_pos.left.xpos - chart_pos.text.font_margin)
+               .attr("y", ypos + chart_pos.text.font_size)
+               .attr("id", chart_pos.left.id + att.id)
+               .style("font-size", chart_pos.text.font_size)
+               
+               cp_chart_center.append("rect")
+               .attr("x", chart_pos.right.xpos)
+               .attr("y", ypos)
+               .attr("width", 0)
+               .attr("height", chart_pos.general.bar_height)
+               .attr("id", chart_pos.right.id + att.id + "_rect")
+               
+               cp_chart_center.append("text")
+               .attr("x", chart_pos.right.xpos - chart_pos.text.font_margin)
+               .attr("y", ypos + chart_pos.text.font_size)
+               .attr("id", chart_pos.right.id + att.id)
+               .style("font-size", chart_pos.text.font_size)
+           }
+       }
+    
+       function updateCenterChart (pokemon) {
+           cp_chart_center.select("#r_height_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("width", rangeHeight(pokemon.height_m)*chart_pos.general.bar_width)
+           
+           cp_chart_center.select("#r_weight_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("width", rangeWeight(pokemon.weight_kg)*chart_pos.general.bar_width)
+           
+           cp_chart_center.select("#r_attack_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("width", rangeAttack(pokemon.attack)*chart_pos.general.bar_width)
+           
+           cp_chart_center.select("#r_defense_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("width", rangeDefense(pokemon.defense)*chart_pos.general.bar_width)
+           
+           cp_chart_center.select("#r_hp_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("width", rangeHP(pokemon.hp)*chart_pos.general.bar_width)
+           
+           cp_chart_center.select("#r_speed_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("width", rangeSpeed(pokemon.speed)*chart_pos.general.bar_width)
+           
+           
+           cp_chart_center.select("#r_height")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.right.xpos + rangeHeight(pokemon.height_m)*chart_pos.general.bar_width + chart_pos.text.font_margin)
+           .text(pokemon.height_m)
+           
+           cp_chart_center.select("#r_weight")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.right.xpos + rangeWeight(pokemon.weight_kg)*chart_pos.general.bar_width + chart_pos.text.font_margin)
+           .text(pokemon.weight_kg)
+           
+           cp_chart_center.select("#r_attack")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.right.xpos + rangeAttack(pokemon.attack)*chart_pos.general.bar_width + chart_pos.text.font_margin)
+           .text(pokemon.attack)
+           
+           cp_chart_center.select("#r_defense")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.right.xpos + rangeDefense(pokemon.defense)*chart_pos.general.bar_width + chart_pos.text.font_margin)
+           .text(pokemon.defense)
+           
+           cp_chart_center.select("#r_hp")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.right.xpos + rangeHP(pokemon.hp)*chart_pos.general.bar_width + chart_pos.text.font_margin)
+           .text(pokemon.hp)
+           
+           cp_chart_center.select("#r_speed")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.right.xpos + rangeSpeed(pokemon.speed)*chart_pos.general.bar_width + chart_pos.text.font_margin)
+           .text(pokemon.speed)
+       }
+    
+       function updateHoverChart (pokemon) {
+           cp_chart_hover.select("#l_height_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeHeight(pokemon.height_m)*chart_pos.general.bar_width)
+           .attr("width", rangeHeight(pokemon.height_m)*chart_pos.general.bar_width)
+           
+           cp_chart_hover.select("#l_weight_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeWeight(pokemon.weight_kg)*chart_pos.general.bar_width)
+           .attr("width", rangeWeight(pokemon.weight_kg)*chart_pos.general.bar_width)
+           
+           cp_chart_hover.select("#l_attack_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeAttack(pokemon.attack)*chart_pos.general.bar_width)
+           .attr("width", rangeAttack(pokemon.attack)*chart_pos.general.bar_width)
+           
+           cp_chart_hover.select("#l_defense_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeDefense(pokemon.defense)*chart_pos.general.bar_width)
+           .attr("width", rangeDefense(pokemon.defense)*chart_pos.general.bar_width)
+           
+           cp_chart_hover.select("#l_hp_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeHP(pokemon.hp)*chart_pos.general.bar_width)
+           .attr("width", rangeHP(pokemon.hp)*chart_pos.general.bar_width)
+           
+           cp_chart_hover.select("#l_speed_rect")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeSpeed(pokemon.speed)*chart_pos.general.bar_width)
+           .attr("width", rangeSpeed(pokemon.speed)*chart_pos.general.bar_width)
+           
+           
+           cp_chart_hover.select("#l_height")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeHeight(pokemon.height_m)*chart_pos.general.bar_width - chart_pos.text.font_margin)
+           .text(pokemon.height_m)
+           
+           cp_chart_hover.select("#l_weight")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeWeight(pokemon.weight_kg)*chart_pos.general.bar_width - chart_pos.text.font_margin)
+           .text(pokemon.weight_kg)
+           
+           cp_chart_hover.select("#l_attack")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeAttack(pokemon.attack)*chart_pos.general.bar_width - chart_pos.text.font_margin)
+           .text(pokemon.attack)
+           
+           cp_chart_hover.select("#l_defense")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeDefense(pokemon.defense)*chart_pos.general.bar_width - chart_pos.text.font_margin)
+           .text(pokemon.defense)
+           
+           cp_chart_hover.select("#l_hp")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeHP(pokemon.hp)*chart_pos.general.bar_width - chart_pos.text.font_margin)
+           .text(pokemon.hp)
+           
+           cp_chart_hover.select("#l_speed")
+           .transition().duration(chart_pos.transition.duration).ease(d3.easeQuadInOut)
+           .attr("x", chart_pos.left.xpos - rangeSpeed(pokemon.speed)*chart_pos.general.bar_width - chart_pos.text.font_margin)
+           .text(pokemon.speed)
+       }
+
+// CALL FUNCTIONS -------------------------------------------------------------------
+    
        function updateDesc () {
          let curr_poke = data.filter(d => d.pokedex_number == currentId)[0]
 
          updateTopBar(cp_center, topbar_pos.right, curr_poke)
+         updateCenterChart(curr_poke)
        }
 
        function hoverDesc (dex_num) {
          let hover_poke = data.filter(d => d.pokedex_number == dex_num)[0]
 
          updateTopBar(cp_hover, topbar_pos.left, hover_poke)
+         updateHoverChart(hover_poke)
        }
        
        function initDesc () {
          initTopBar(cp_center, topbar_pos.right)
          initTopBar(cp_hover, topbar_pos.left)
+         initChart()
+         
+         hoverDesc(currentId)
          updateDesc()
        }
 
@@ -354,13 +596,17 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
         let node = {
           data: {
-            id : n.pokedex_number,
+            id : +n.pokedex_number,
             name: n.name,
             type1 : n.type1,
             type2: n.type2,
-            height: n.height_m,
-            weight: n.weight_kg,
-            classification: n.classfication
+            height: +n.height_m,
+            weight: +n.weight_kg,
+            classification: n.classfication,
+            attack: +n.attack,
+            defense: +n.defense,
+            hp: +n.hp,
+            speed: +n.speed,
           },
           style : stylesOptions
         }
@@ -405,6 +651,27 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
               let type2_c = currentNode.data("type2")
               closeness += (type1 == type1_c || type1 == type2_c) ? 0.5 : 0
               closeness += (type2 == type1_c || type2 == type2_c) ? 0.5 : 0
+            }
+          
+            if(ad_checked){
+              let a = n.data("attack")
+              let d = n.data("defense")
+              let a_c = currentNode.data("attack")
+              let d_c = currentNode.data("defense")
+              closeness -= rangeAttack(Math.abs(a_c - a))
+              closeness -= rangeDefense(Math.abs(d_c - d))
+            }
+          
+            if(hp_checked){
+              let hp = n.data("hp")
+              let hp_c = currentNode.data("hp")
+              closeness += rangeHP(Math.abs(hp_c - hp))
+            }
+          
+            if(speed_checked){
+              let speed = n.data("speed")
+              let speed_c = currentNode.data("speed")
+              closeness += rangeSpeed(Math.abs(speed_c - speed))
             }
 
             n.data("closeness", closeness)
