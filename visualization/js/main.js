@@ -1,22 +1,21 @@
-// js.cytoscape.org
-
 
 // TODOS:
-//  - circles highlight pokemon with same closeness
 //  - update sprites
 
-visuWidth = window.innerWidth || document.body.clientWidth;
-visuHeight = 600;
+// window size : auto on width
+let visuWidth = window.innerWidth || document.body.clientWidth;
+let visuHeight = 600;
 
+// default values
 let defaultWidth = 10
 let defaultHeight = 10
-
-fixedEdgeLength = 100;
-
+let fixedEdgeLength = 100;
 let zoomlevel = 4
 let closenessScalar = 5
+let defaultHoverColor = "red"
 
-currentId = 25
+// default current node : Pikachu
+let currentId = 25
 
 TYPE_COLOR = {
   "normal": "#A8A77A",
@@ -41,9 +40,9 @@ TYPE_COLOR = {
 
 
 
+d3.csv("./data/pokemon.csv", function(data) {
 
-d3.csv("./data/pokemon_gen1.csv", function(data) {
-
+  // scales to compute closeness and display bar chart
   let heights = data.map(d => +d.height_m)
   let rangeHeight = d3.scaleLinear().domain([0, d3.max(heights)]).range([0,1])
 
@@ -62,46 +61,60 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
   let speeds = data.map(d => +d.speed)
   let rangeSpeed = d3.scaleLinear().domain([0, d3.max(speeds)]).range([0,1])
 
-  let speed_checked = true;
-  let hp_checked = true;
-  let ad_checked = true;
-  let hw_checked = true;
-  let class_checked = true;
-  let types_checked = true;
-
 
 
 /****************************************************************************
  ********************************** CHECKBOXES ******************************
  ****************************************************************************/
 
+// inputs are all checked
+let speed_checked = true;
+let hp_checked = true;
+let att_checked = true;
+let def_checked = true;
+let h_checked = true;
+let w_checked = true;
+let class_checked = true;
+let types_checked = true;
 
- $('#speed').on('change', function() {
+
+// callbacks
+$('#speed').on('change', function() {
   speed_checked = this.checked
   updateGraph()
   setAccent("speed", speed_checked)
 });
- $('#hp').on('change', function() {
+$('#hp').on('change', function() {
   hp_checked = this.checked
   updateGraph()
   setAccent("hp", hp_checked)
 });
- $('#ad').on('change', function() {
-  ad_checked = this.checked
+$('#att').on('change', function() {
+  att_checked = this.checked
   updateGraph()
-  setAccent("ad", ad_checked)
+  setAccent("a", att_checked)
 });
- $('#hw').on('change', function() {
-  hw_checked = this.checked
+$('#def').on('change', function() {
+  def_checked = this.checked
   updateGraph()
-  setAccent("hw", hw_checked)
+  setAccent("d", def_checked)
 });
- $('#types').on('change', function() {
+$('#he').on('change', function() {
+  h_checked = this.checked
+  updateGraph()
+  setAccent("h", h_checked)
+});
+$('#we').on('change', function() {
+  w_checked = this.checked
+  updateGraph()
+  setAccent("w", w_checked)
+});
+$('#types').on('change', function() {
   types_checked = this.checked
   updateGraph()
   setAccent("type", types_checked)
 });
- $('#classification').on('change', function() {
+$('#classification').on('change', function() {
   class_checked = this.checked
   updateGraph()
   setAccent("classif", class_checked)
@@ -120,11 +133,9 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
  .attr("class", "my_select_box")
  .attr("data-placeholder", "Choose a Pokemon...")
 
- select_.append("option")
- .attr("value", " ")
+ select_.append("option").attr("value", " ")
 
  for (let i of ids_names) {
-   console.log(name)
    select_.append("option")
    .attr("value", i[0])
    .text(i[1])
@@ -132,28 +143,19 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
  $('.my_select_box').chosen({
    allow_single_deselect: true,
-   width: "100%"
+   width: "100%",
+   search_contains: true
  });
 
 
  $('.my_select_box').on('change', function(evt, params) {
-
   zoomToId(parseInt(params.selected))
   hoverDesc(parseInt(params.selected))
 });
 
 
- function zoomToId(id, onclick=false){
-
-  let node = cy.getElementById(id)
-  let pos = node.position()
-  let obj = (onclick) ?  { center: { eles: node }  } : { zoom: zoomlevel, center: { eles: node }  }
-
-  cy.animate(obj)
-
-}
 /****************************************************************************
- ********************************* POKE PREVIEW *****************************
+ ********************************* POKEMON PREVIEW *****************************
  ****************************************************************************/
 
  let nbPokemon = data.length
@@ -168,8 +170,7 @@ d3.csv("./data/pokemon_gen1.csv", function(data) {
 
  // GENERAL DEFINITIONS AND CONSTANTS -----------------------------------------------
 
- let cp = d3.select("#current_pokemon")
- .append("svg")
+ let cp = d3.select("#current_pokemon").append("svg")
  .attr("height", "100%")
  .attr("width", "100%")
 
@@ -533,13 +534,15 @@ function setAccent (attribute, value) {
  if (attribute == "type" || attribute == "classif") {
   cp_center.select("#r_" + attribute).attr("opacity", opacity)
   cp_hover.select("#l_" + attribute).attr("opacity", opacity)
-} else if (attribute == "ad") {
+} else if (attribute == "a") {
   setAccent("attack", value)
+} else if (attribute == "d") {
   setAccent("defense", value)
-} else if (attribute == "hw") {
+} else if (attribute == "h") {
   setAccent("height", value)
+} else if (attribute == "w") {
   setAccent("weight", value)
-} else {
+}else {
   cp_chart.select("#r_" + attribute).attr("opacity", opacity)
   cp_chart.select("#r_" + attribute + "_rect").attr("opacity", opacity)
   cp_chart.select("#l_" + attribute).attr("opacity", opacity)
@@ -575,8 +578,8 @@ function initDesc () {
  ****************************************************************************/
 
  let stylesOptionsDefault = {
-  'height': 20,
-  'width': 20,
+  'height': 30,
+  'width': 30,
   "background-height": "80%",
   "background-width": "87%",
   'text-valign': 'bottom',
@@ -592,7 +595,9 @@ let stylesOptionsCurrent = {
 
 let stylesHover = {
   "width":40,
-  "height":40
+  "height":40,
+  "background-color": defaultHoverColor,
+  "border-color": defaultHoverColor
 }
 
 
@@ -606,8 +611,9 @@ let cy = cytoscape({
   }
   ],
   autoungrabify: true,
-  minZoom:0.3,
-  maxZoom:3
+  minZoom:0.1,
+  maxZoom:3,
+  minNodeSpacing:2
 });
 
 
@@ -682,12 +688,15 @@ let concentricOptions = {
               })
             }
 
-            if(hw_checked){
+            if(h_checked){
               let h = n.data("height")
-              let w = n.data("weight")
               let h_c = currentNode.data("height")
-              let w_c = currentNode.data("weight")
               closeness -= rangeHeight(Math.abs(h_c - h))
+            }
+
+            if(w_checked){
+              let w = n.data("weight")
+              let w_c = currentNode.data("weight")
               closeness -= rangeWeight(Math.abs(w_c - w))
             }
 
@@ -700,12 +709,15 @@ let concentricOptions = {
               closeness += (type2 == type1_c || type2 == type2_c) ? 1 : 0
             }
 
-            if(ad_checked){
+            if(att_checked){
               let a = n.data("attack")
-              let d = n.data("defense")
               let a_c = currentNode.data("attack")
-              let d_c = currentNode.data("defense")
               closeness -= rangeAttack(Math.abs(a_c - a))
+            }
+
+            if(def_checked){
+              let d = n.data("defense")
+              let d_c = currentNode.data("defense")
               closeness -= rangeDefense(Math.abs(d_c - d))
             }
 
@@ -740,7 +752,7 @@ let concentricOptions = {
       let closeness_min = updatedNodes[updatedNodes.length-1].closeness
       let closeness_max = updatedNodes[0].closeness
 
-      let rangeLevel = d3.scaleLog().domain([closeness_max, closeness_min]).range([1,nbLevel])
+      let rangeLevel = d3.scaleLog().domain([closeness_max, closeness_min-1]).range([1 ,nbLevel]).clamp(true)
 
         //let rangeLevel = d3.scalePow().domain([0, nbPokemon-1]).range([1,nbLevel]).interpolate(d3.interpolateRound);
         return rangeLevel
@@ -767,8 +779,6 @@ let concentricOptions = {
             l = 0
             stylesOptions = stylesOptionsCurrent
 
-            stylesOptions["background-color"] = TYPE_COLOR[node.data("type1")];
-            stylesOptions["border-color"] = TYPE_COLOR[node.data("type2")];
             stylesOptions["background-image"] = "data/sprites/" + n.id + ".png";
 
           }
@@ -778,9 +788,11 @@ let concentricOptions = {
             //l = rangeLevel(i)
           }
 
+          stylesOptions["background-color"] = TYPE_COLOR[node.data("type1")];
+          stylesOptions["border-color"] = TYPE_COLOR[node.data("type2")];
           node.style(stylesOptions)
-          node.style("height", defaultHeight + closenessScalar*(n.closeness))
-          node.style("width", defaultWidth + closenessScalar*(n.closeness))
+          // node.style("height", defaultHeight + closenessScalar*(n.closeness))
+          // node.style("width", defaultWidth + closenessScalar*(n.closeness))
           node.data("level",l)
 
         }
@@ -795,10 +807,16 @@ let concentricOptions = {
     cy.on('mouseover', 'node', function(event) {
       let node = event.target;
 
-      if(node.data("id") != currentId) {
+      if (node.data("id") == currentId) {
+        node.style(stylesOptionsCurrent)
+        node.style({"background-color": defaultHoverColor})
+        node.style({"border-color": defaultHoverColor})
+      }
+      else {
         let levelNodes = cy.elements("[level =" + node.data("level") + "]")
-        levelNodes.forEach(n => {n.style({"border-color":"red"})})
-        node.style(stylesHover)
+        levelNodes.forEach(n => {
+          n.style(stylesHover)
+        })
       }
 
       hoverDesc(node.data("id"))
@@ -812,16 +830,21 @@ let concentricOptions = {
 
       if (node.data("id") == currentId) {
         node.style(stylesOptionsCurrent)
+        node.style({"background-color": TYPE_COLOR[node.data("type1")]})
+        node.style({"border-color": TYPE_COLOR[node.data("type2")]})
       }
       else {
-        node.style(stylesOptionsDefault)
 
         let levelNodes = cy.elements("[level =" + node.data("level") + "]")
-        levelNodes.forEach(n => {n.style({"border-color":TYPE_COLOR[n.data("type2")]})})
+        levelNodes.forEach(n => {
+          n.style(stylesOptionsDefault)
+          n.style({"border-color":TYPE_COLOR[n.data("type2")]})
+          n.style({"background-color":TYPE_COLOR[n.data("type1")]})
+        })
         
 
-        node.style("height", defaultHeight + closenessScalar*(node.data("closeness")))
-        node.style("width", defaultWidth + closenessScalar*(node.data("closeness")))
+        // node.style("height", defaultHeight + closenessScalar*(node.data("closeness")))
+        // node.style("width", defaultWidth + closenessScalar*(node.data("closeness")))
 
       }
 
@@ -839,19 +862,29 @@ let concentricOptions = {
       updateGraph()
       updateDesc()
 
-        // update graph
-        cy.layout(concentricOptions).run();
+      cy.layout(concentricOptions).run();
+
+    });
 
 
-      });
+    function zoomToId(id, onclick=false){
+
+      let node = cy.getElementById(id)
+      let pos = node.position()
+      let obj = (onclick) ?  { center: { eles: node }  } : { zoom: zoomlevel, center: { eles: node }  }
+
+      cy.animate(obj)
+
+    }
 
 
+    // init graph
     initGraph()
     initDesc()
     updateGraph()
     cy.animate({
       zoom: {
-        level:4,
+        level:2,
         position: {x:visuWidth/2, y:visuHeight/2}
       }
     })
