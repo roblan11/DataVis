@@ -71,19 +71,43 @@ d3.csv("./data/pokemon.csv", function(data) {
  ****************************************************************************/
 
 
- $('#speed').on('change', function() {  speed_checked = this.checked ; updateGraph() });
- $('#hp').on('change', function() {  hp_checked = this.checked ; updateGraph() });
- $('#ad').on('change', function() {  ad_checked = this.checked ; updateGraph() });
- $('#hw').on('change', function() {  hw_checked = this.checked ; updateGraph() });
- $('#types').on('change', function() {  types_checked = this.checked ; updateGraph() });
- $('#classification').on('change', function() {  class_checked = this.checked ; updateGraph() });
+ $('#speed').on('change', function() {
+  speed_checked = this.checked
+  updateGraph()
+  setAccent("speed", speed_checked)
+ });
+ $('#hp').on('change', function() {
+  hp_checked = this.checked
+  updateGraph()
+  setAccent("hp", hp_checked)
+ });
+ $('#ad').on('change', function() {
+  ad_checked = this.checked
+  updateGraph()
+  setAccent("ad", ad_checked)
+ });
+ $('#hw').on('change', function() {
+  hw_checked = this.checked
+  updateGraph()
+  setAccent("hw", hw_checked)
+ });
+ $('#types').on('change', function() {
+  types_checked = this.checked
+  updateGraph()
+  setAccent("type", types_checked)
+ });
+ $('#classification').on('change', function() {
+  class_checked = this.checked
+  updateGraph()
+  setAccent("classif", class_checked)
+ });
 
 
 /****************************************************************************
  ********************************** SEARCH **********************************
  ****************************************************************************/
 
- let names = data.map(d => d.name)
+ let ids_names = data.map(d => [d.pokedex_number, d.name])
 
  let search = d3.select("#search_wrapper")
 
@@ -94,13 +118,11 @@ d3.csv("./data/pokemon.csv", function(data) {
  select_.append("option")
  .attr("value", " ")
 
- let val = 1
-
- for (let name of names) {
+ for (let i of ids_names) {
+     console.log(name)
    select_.append("option")
-   .attr("value", val)
-   .text(name)
-   val++
+   .attr("value", i[0])
+   .text(i[1])
  }
 
  $('.my_select_box').chosen({
@@ -112,6 +134,7 @@ d3.csv("./data/pokemon.csv", function(data) {
  $('.my_select_box').on('change', function(evt, params) {
 
   zoomToId(parseInt(params.selected))
+  hoverDesc(parseInt(params.selected))
 });
 
 
@@ -502,6 +525,26 @@ function updateHoverChart (pokemon) {
 
 // CALL FUNCTIONS -------------------------------------------------------------------
 
+function setAccent (attribute, value) {
+ const opacity = value ? 1 : 0.5
+ 
+ if (attribute == "type" || attribute == "classif") {
+  cp_center.select("#r_" + attribute).attr("opacity", opacity)
+  cp_hover.select("#l_" + attribute).attr("opacity", opacity)
+ } else if (attribute == "ad") {
+  setAccent("attack", value)
+  setAccent("defense", value)
+ } else if (attribute == "hw") {
+  setAccent("height", value)
+  setAccent("weight", value)
+ } else {
+  cp_chart.select("#r_" + attribute).attr("opacity", opacity)
+  cp_chart.select("#r_" + attribute + "_rect").attr("opacity", opacity)
+  cp_chart.select("#l_" + attribute).attr("opacity", opacity)
+  cp_chart.select("#l_" + attribute + "_rect").attr("opacity", opacity)
+ }
+}
+
 function updateDesc () {
  let curr_poke = data.filter(d => d.pokedex_number == currentId)[0]
 
@@ -528,8 +571,6 @@ function initDesc () {
 /****************************************************************************
  ******************************** CYTOSCAPE GRAPH ***************************
  ****************************************************************************/
-
-    // TODO actually diable text rather than setting its size to 0...
     
     let stylesOptionsDefault = {
       'height': 20,
