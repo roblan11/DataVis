@@ -159,7 +159,7 @@ $('#classification').on('change', function() {
  ****************************************************************************/
 
  let nbPokemon = data.length
- let nbLevel = nbPokemon/15
+ let nbLevel = nbPokemon/20
 
     /* DATA ENTRIES TO SHOW
        name / pokedex_number
@@ -752,7 +752,7 @@ let concentricOptions = {
       let closeness_min = updatedNodes[updatedNodes.length-1].closeness
       let closeness_max = updatedNodes[0].closeness
 
-      let rangeLevel = d3.scaleLog().domain([closeness_max, closeness_min-1]).range([1 ,nbLevel]).clamp(true)
+      let rangeLevel = d3.scaleLinear().domain([closeness_min, closeness_max]).range([nbLevel,1]).clamp(true)
 
         //let rangeLevel = d3.scalePow().domain([0, nbPokemon-1]).range([1,nbLevel]).interpolate(d3.interpolateRound);
         return rangeLevel
