@@ -4,8 +4,6 @@
 // TODOS:
 //  - circles highlight pokemon with same closeness
 //  - update sprites
-//  - set max / min zoom
-//  - remove zoom on click
 
 visuWidth = window.innerWidth || document.body.clientWidth;
 visuHeight = 600;
@@ -15,6 +13,7 @@ let defaultHeight = 10
 
 fixedEdgeLength = 100;
 
+let zoomlevel = 4
 let closenessScalar = 5
 
 currentId = 25
@@ -43,7 +42,7 @@ TYPE_COLOR = {
 
 
 
-d3.csv("./data/pokemon.csv", function(data) {
+d3.csv("./data/pokemon_gen1.csv", function(data) {
 
   let heights = data.map(d => +d.height_m)
   let rangeHeight = d3.scaleLinear().domain([0, d3.max(heights)]).range([0,1])
@@ -81,32 +80,32 @@ d3.csv("./data/pokemon.csv", function(data) {
   speed_checked = this.checked
   updateGraph()
   setAccent("speed", speed_checked)
- });
+});
  $('#hp').on('change', function() {
   hp_checked = this.checked
   updateGraph()
   setAccent("hp", hp_checked)
- });
+});
  $('#ad').on('change', function() {
   ad_checked = this.checked
   updateGraph()
   setAccent("ad", ad_checked)
- });
+});
  $('#hw').on('change', function() {
   hw_checked = this.checked
   updateGraph()
   setAccent("hw", hw_checked)
- });
+});
  $('#types').on('change', function() {
   types_checked = this.checked
   updateGraph()
   setAccent("type", types_checked)
- });
+});
  $('#classification').on('change', function() {
   class_checked = this.checked
   updateGraph()
   setAccent("classif", class_checked)
- });
+});
 
 
 /****************************************************************************
@@ -125,7 +124,7 @@ d3.csv("./data/pokemon.csv", function(data) {
  .attr("value", " ")
 
  for (let i of ids_names) {
-     console.log(name)
+   console.log(name)
    select_.append("option")
    .attr("value", i[0])
    .text(i[1])
@@ -144,16 +143,13 @@ d3.csv("./data/pokemon.csv", function(data) {
 });
 
 
- function zoomToId(id){
+ function zoomToId(id, onclick=false){
 
   let node = cy.getElementById(id)
   let pos = node.position()
-  cy.animate({
-    zoom: zoomlevel,
-    center: {
-      eles: node
-    }
-  })
+  let obj = (onclick) ?  { center: { eles: node }  } : { zoom: zoomlevel, center: { eles: node }  }
+
+  cy.animate(obj)
 
 }
 /****************************************************************************
@@ -537,18 +533,18 @@ function setAccent (attribute, value) {
  if (attribute == "type" || attribute == "classif") {
   cp_center.select("#r_" + attribute).attr("opacity", opacity)
   cp_hover.select("#l_" + attribute).attr("opacity", opacity)
- } else if (attribute == "ad") {
+} else if (attribute == "ad") {
   setAccent("attack", value)
   setAccent("defense", value)
- } else if (attribute == "hw") {
+} else if (attribute == "hw") {
   setAccent("height", value)
   setAccent("weight", value)
- } else {
+} else {
   cp_chart.select("#r_" + attribute).attr("opacity", opacity)
   cp_chart.select("#r_" + attribute + "_rect").attr("opacity", opacity)
   cp_chart.select("#l_" + attribute).attr("opacity", opacity)
   cp_chart.select("#l_" + attribute + "_rect").attr("opacity", opacity)
- }
+}
 }
 
 function updateDesc () {
@@ -577,56 +573,60 @@ function initDesc () {
 /****************************************************************************
  ******************************** CYTOSCAPE GRAPH ***************************
  ****************************************************************************/
-    
-    let stylesOptionsDefault = {
-      'height': 20,
-      'width': 20,
-      "background-height": "80%",
-      "background-width": "87%",
-      'text-valign': 'bottom',
-      'text-halign': 'center',
-      "text-transform": "uppercase",
-      "border-width": 4
-    }
 
-    let stylesOptionsCurrent = {
-      "width":50,
-      "height":50
-    }
+ let stylesOptionsDefault = {
+  'height': 20,
+  'width': 20,
+  "background-height": "80%",
+  "background-width": "87%",
+  'text-valign': 'bottom',
+  'text-halign': 'center',
+  "text-transform": "uppercase",
+  "border-width": 4
+}
 
-    let stylesHover = {
-      "width":40,
-      "height":40
-    }
+let stylesOptionsCurrent = {
+  "width":50,
+  "height":50
+}
 
-
-    let cy = cytoscape({
-      container: document.getElementById('cy'),
-
-      style: [
-      {
-        selector: 'node',
-        style: stylesOptionsDefault
-      }
-      ],
-      autoungrabify: true
-    });
+let stylesHover = {
+  "width":40,
+  "height":40
+}
 
 
+let cy = cytoscape({
+  container: document.getElementById('cy'),
+
+  style: [
+  {
+    selector: 'node',
+    style: stylesOptionsDefault
+  }
+  ],
+  autoungrabify: true,
+  minZoom:0.3,
+  maxZoom:3
+});
 
 
-    let concentricOptions = {
-      name: 'concentric',
-      concentric: function(node) {
-        return 10 - node.data('level');
-      },
-      levelWidth: function() {
-        return 1;
-      },
-      animate: true,
-      fit: false,
-      animationDuration: 1000
-    };
+
+
+let concentricOptions = {
+  name: 'concentric',
+  concentric: function(node) {
+    return 10 - node.data('level');
+  },
+  levelWidth: function() {
+    return 1;
+  },
+  animate: true,
+  fit: false,
+  animationDuration: 1000,
+  spacingFactor: 0.9
+};
+
 
 
     // init
@@ -696,8 +696,8 @@ function initDesc () {
               let type2 = n.data("type2")
               let type1_c = currentNode.data("type1")
               let type2_c = currentNode.data("type2")
-              closeness += (type1 == type1_c || type1 == type2_c) ? 0.5 : 0
-              closeness += (type2 == type1_c || type2 == type2_c) ? 0.5 : 0
+              closeness += (type1 == type1_c || type1 == type2_c) ? 1 : 0
+              closeness += (type2 == type1_c || type2 == type2_c) ? 1 : 0
             }
 
             if(ad_checked){
@@ -740,7 +740,7 @@ function initDesc () {
       let closeness_min = updatedNodes[updatedNodes.length-1].closeness
       let closeness_max = updatedNodes[0].closeness
 
-        let rangeLevel = d3.scaleLog().domain([closeness_max, closeness_min]).range([1,nbLevel])
+      let rangeLevel = d3.scaleLog().domain([closeness_max, closeness_min]).range([1,nbLevel])
 
         //let rangeLevel = d3.scalePow().domain([0, nbPokemon-1]).range([1,nbLevel]).interpolate(d3.interpolateRound);
         return rangeLevel
@@ -796,6 +796,8 @@ function initDesc () {
       let node = event.target;
 
       if(node.data("id") != currentId) {
+        let levelNodes = cy.elements("[level =" + node.data("level") + "]")
+        levelNodes.forEach(n => {n.style({"border-color":"red"})})
         node.style(stylesHover)
       }
 
@@ -814,7 +816,9 @@ function initDesc () {
       else {
         node.style(stylesOptionsDefault)
 
-        console.log(node)
+        let levelNodes = cy.elements("[level =" + node.data("level") + "]")
+        levelNodes.forEach(n => {n.style({"border-color":TYPE_COLOR[n.data("type2")]})})
+        
 
         node.style("height", defaultHeight + closenessScalar*(node.data("closeness")))
         node.style("width", defaultWidth + closenessScalar*(node.data("closeness")))
@@ -829,7 +833,7 @@ function initDesc () {
 
       let node = evt.target;
 
-      zoomToId(currentId)
+      zoomToId(currentId, true)
       currentId = node.data("id")
 
       updateGraph()
@@ -840,7 +844,6 @@ function initDesc () {
 
 
       });
-
 
 
     initGraph()
