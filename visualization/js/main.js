@@ -1,6 +1,12 @@
 // js.cytoscape.org
 
 
+// TODOS:
+//  - circles highlight pokemon with same closeness
+//  - update sprites
+//  - set max / min zoom
+//  - remove zoom on click
+
 visuWidth = window.innerWidth || document.body.clientWidth;
 visuHeight = 600;
 
@@ -143,7 +149,7 @@ d3.csv("./data/pokemon.csv", function(data) {
   let node = cy.getElementById(id)
   let pos = node.position()
   cy.animate({
-    zoom: 4,
+    zoom: zoomlevel,
     center: {
       eles: node
     }

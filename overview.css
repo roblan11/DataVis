@@ -1,0 +1,39 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+a, a:active, a:hover {
+    text-decoration: none;
+}
+
+#visualization {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30%;
+    width: 100%;
+    background-color: lightgray
+}
+
+#process_book {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30%;
+    width: 100%;
+    background-color: lightskyblue
+}
+
+#code {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30%;
+    width: 100%;
+    background-color: lightgreen
+}
+
+.spacer {
+    height: 5%;
+}
