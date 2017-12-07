@@ -325,7 +325,7 @@ $('#classification').on('change', function() {
    }
 
    group.select("#" + position.id + "classif")
-   .text(pokemon.classfication.replace("@@", ", "))
+   .text(pokemon.classfication.replace(/@@/g, ", "))
  }
 
 // BUTTERFLY CHART -----------------------------------------------------------------
@@ -534,20 +534,20 @@ function setAccent (attribute, value) {
  if (attribute == "type" || attribute == "classif") {
   cp_center.select("#r_" + attribute).attr("opacity", opacity)
   cp_hover.select("#l_" + attribute).attr("opacity", opacity)
-} else if (attribute == "a") {
+ } else if (attribute == "a") {
   setAccent("attack", value)
-} else if (attribute == "d") {
+ } else if (attribute == "d") {
   setAccent("defense", value)
-} else if (attribute == "h") {
+ } else if (attribute == "h") {
   setAccent("height", value)
-} else if (attribute == "w") {
+ } else if (attribute == "w") {
   setAccent("weight", value)
-}else {
+ } else {
   cp_chart.select("#r_" + attribute).attr("opacity", opacity)
   cp_chart.select("#r_" + attribute + "_rect").attr("opacity", opacity)
   cp_chart.select("#l_" + attribute).attr("opacity", opacity)
   cp_chart.select("#l_" + attribute + "_rect").attr("opacity", opacity)
-}
+ }
 }
 
 function updateDesc () {
