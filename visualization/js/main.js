@@ -240,7 +240,7 @@ $('#classification').on('change', function() {
 
      group.append("text")
      .attr("x", position.xpos + 2*topbar_pos.general.margin + image_size)
-     .attr("y", topbar_pos.general.margin + 20)
+     .attr("y", (topbar_pos.general.height + topbar_pos.text.n_pokedex_font_size)/2)
      .attr("id", position.id + "n_pokedex")
      .style("font-size", topbar_pos.text.n_pokedex_font_size)
 
@@ -264,7 +264,7 @@ $('#classification').on('change', function() {
 
      group.append("text")
      .attr("x", position.xpos + topbar_pos.general.width - 2*topbar_pos.general.margin - image_size)
-     .attr("y", topbar_pos.general.margin + 20)
+     .attr("y", (topbar_pos.general.height + topbar_pos.text.n_pokedex_font_size)/2)
      .attr("id", position.id + "n_pokedex")
      .style("font-size", topbar_pos.text.n_pokedex_font_size)
 
