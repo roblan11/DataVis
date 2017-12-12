@@ -56,7 +56,7 @@ for (var i=0; i<keys.length; i++) {
 
 
 
-d3.csv("./data/pokemon_gen1.csv", function(data) {
+d3.csv("./data/pokemon.csv", function(data) {
 
   // scales to compute closeness and display bar chart
   let heights = data.map(d => +d.height_m)
