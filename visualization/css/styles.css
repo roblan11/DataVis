@@ -18,15 +18,23 @@ h1 {
 	left: 2%;
 }
 
+input[type=checkbox]{
+    border-color: red;
+}
+
 #options {
 	position: absolute;
 	top:3%;
-	left:3%;
+	left:2%;
     line-height: 180%;
     font-size: 80%;
     background-color: rgba(255, 255, 255, 0.5);
     padding: 1%;
     font-family: 'Press Start 2P';
+}
+
+input[style=checkbox] {
+    
 }
 
 #cy {
@@ -121,4 +129,45 @@ h1 {
     fill: black;
     font-weight: bold;
     text-anchor: start;
+}
+
+#legendButton {
+    position: absolute;
+    right:4%;
+    top:10%;
+
+    background:rgba(255,255,255,0.5);
+    width:150px;
+    padding:5px;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Press Start 2P';
+    color:rgba(0,0,0,0.4);
+}
+
+#legendButton #legend {
+    display:none;
+    width:100px;
+    text-align:left;
+    font-family: arial;
+    text-transform:lowercase;
+}
+
+
+#legendButton:hover #legend, #legendButton:hover #legend:hover {
+    display:block;
+}
+
+
+#legend .patch {
+    width:20px;
+    height:10px;
+    display:inline-block;
+    vertical-align: middle;
+    margin-right:5px;
+}
+
+#legend .text {
+    display:inline-block;
+    vertical-align: middle;
 }
