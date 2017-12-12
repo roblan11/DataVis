@@ -675,13 +675,13 @@ let concentricOptions = {
 
       cy.elements().toArray().forEach(n => {
             // compute closeness
-            let closeness = 5
+            let closeness = 0
             let currentNode = cy.getElementById(currentId)
 
             if(class_checked) {
               let classification = n.data("classification").split("@@")
               let classification_c = currentNode.data("classification").split("@@")
-              classification.forEach(c=>{
+              classification.forEach(c => {
                 classification_c.forEach(c1 => {
                   closeness += (c == c1) ? 1 : 0
                 })
@@ -691,13 +691,13 @@ let concentricOptions = {
             if(h_checked){
               let h = n.data("height")
               let h_c = currentNode.data("height")
-              closeness -= rangeHeight(Math.abs(h_c - h))
+              closeness -= 2*rangeHeight(Math.abs(h_c - h))
             }
 
             if(w_checked){
               let w = n.data("weight")
               let w_c = currentNode.data("weight")
-              closeness -= rangeWeight(Math.abs(w_c - w))
+              closeness -= 2*rangeWeight(Math.abs(w_c - w))
             }
 
             if(types_checked){
@@ -705,32 +705,38 @@ let concentricOptions = {
               let type2 = n.data("type2")
               let type1_c = currentNode.data("type1")
               let type2_c = currentNode.data("type2")
-              closeness += (type1 == type1_c || type1 == type2_c) ? 1 : 0
-              closeness += (type2 == type1_c || type2 == type2_c) ? 1 : 0
+              if(type1 == type1_c && type2 == type2_c) {
+                  closeness += 1
+              } else {
+                  closeness += (type1 == type1_c) ? 0.5 : 0
+                  closeness += (type2 == type2_c) ? 0.25 : 0
+                  closeness += (type1 == type2_c) ? 1/8 : 0
+                  closeness += (type2 == type1_c) ? 1/8 : 0
+              }
             }
 
             if(att_checked){
               let a = n.data("attack")
               let a_c = currentNode.data("attack")
-              closeness -= rangeAttack(Math.abs(a_c - a))
+              closeness -= 2*rangeAttack(Math.abs(a_c - a))
             }
 
             if(def_checked){
               let d = n.data("defense")
               let d_c = currentNode.data("defense")
-              closeness -= rangeDefense(Math.abs(d_c - d))
+              closeness -= 2*rangeDefense(Math.abs(d_c - d))
             }
 
             if(hp_checked){
               let hp = n.data("hp")
               let hp_c = currentNode.data("hp")
-              closeness -= rangeHP(Math.abs(hp_c - hp))
+              closeness -= 2*rangeHP(Math.abs(hp_c - hp))
             }
 
             if(speed_checked){
               let speed = n.data("speed")
               let speed_c = currentNode.data("speed")
-              closeness -= rangeSpeed(Math.abs(speed_c - speed))
+              closeness -= 2*rangeSpeed(Math.abs(speed_c - speed))
             }
 
             n.data("closeness", closeness)

@@ -29,6 +29,10 @@ h1 {
     font-family: 'Press Start 2P';
 }
 
+input[style=checkbox] {
+    
+}
+
 #cy {
 	width: 100%;
 	height: 80%;
