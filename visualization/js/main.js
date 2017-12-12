@@ -39,8 +39,24 @@ TYPE_COLOR = {
 }
 
 
+let legend = document.getElementById("legend");
+var keys = Object.keys(TYPE_COLOR).sort();
+for (var i=0; i<keys.length; i++) {
+  let patch = document.createElement("div");
+  patch.style.background = (TYPE_COLOR[keys[i]])
+  patch.className = "patch"
+  let text = document.createElement("div");
+  text.className ="text"
+  text.innerHTML = keys[i]
 
-d3.csv("./data/pokemon.csv", function(data) {
+  legend.appendChild(patch);
+  legend.appendChild(text);
+  legend.appendChild(document.createElement("br"));
+}
+
+
+
+d3.csv("./data/pokemon_gen1.csv", function(data) {
 
   // scales to compute closeness and display bar chart
   let heights = data.map(d => +d.height_m)
@@ -534,20 +550,20 @@ function setAccent (attribute, value) {
  if (attribute == "type" || attribute == "classif") {
   cp_center.select("#r_" + attribute).attr("opacity", opacity)
   cp_hover.select("#l_" + attribute).attr("opacity", opacity)
- } else if (attribute == "a") {
+} else if (attribute == "a") {
   setAccent("attack", value)
- } else if (attribute == "d") {
+} else if (attribute == "d") {
   setAccent("defense", value)
- } else if (attribute == "h") {
+} else if (attribute == "h") {
   setAccent("height", value)
- } else if (attribute == "w") {
+} else if (attribute == "w") {
   setAccent("weight", value)
- } else {
+} else {
   cp_chart.select("#r_" + attribute).attr("opacity", opacity)
   cp_chart.select("#r_" + attribute + "_rect").attr("opacity", opacity)
   cp_chart.select("#l_" + attribute).attr("opacity", opacity)
   cp_chart.select("#l_" + attribute + "_rect").attr("opacity", opacity)
- }
+}
 }
 
 function updateDesc () {
@@ -871,8 +887,13 @@ let concentricOptions = {
 
       let node = cy.getElementById(id)
       let pos = node.position()
-      let obj = (onclick) ?  { center: { eles: node }  } : { zoom: zoomlevel, center: { eles: node }  }
-
+      let obj
+      if (onclick) {
+        obj = ((cy.zoom() < 2)) ?  { center: { eles: node }  } : { zoom: 2, center: { eles: node }  }
+      }
+      else {
+        obj = { zoom: zoomlevel, center: { eles: node }  }
+      }
       cy.animate(obj)
 
     }
