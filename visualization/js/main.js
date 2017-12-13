@@ -721,14 +721,17 @@ let concentricOptions = {
               let type2 = n.data("type2")
               let type1_c = currentNode.data("type1")
               let type2_c = currentNode.data("type2")
+              
+              let closeness_tmp = 0;
               if(type1 == type1_c && type2 == type2_c) {
-                  closeness += 1
+                  closeness_tmp += 1
               } else {
-                  closeness += (type1 == type1_c) ? 0.5 : 0
-                  closeness += (type2 == type2_c) ? 0.25 : 0
-                  closeness += (type1 == type2_c) ? 1/8 : 0
-                  closeness += (type2 == type1_c) ? 1/8 : 0
+                  closeness_tmp += (type1 == type1_c) ? 0.5 : 0
+                  closeness_tmp += (type2 == type2_c) ? 0.25 : 0
+                  closeness_tmp += (type1 == type2_c) ? 1/8 : 0
+                  closeness_tmp += (type2 == type1_c) ? 1/8 : 0
               }
+              closeness -= (1 - closeness_tmp)
             }
 
             if(att_checked){
