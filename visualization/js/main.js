@@ -721,6 +721,7 @@ let concentricOptions = {
               let type2 = n.data("type2")
               let type1_c = currentNode.data("type1")
               let type2_c = currentNode.data("type2")
+              
               let closeness_tmp = 0;
               if(type1 == type1_c && type2 == type2_c) {
                   closeness_tmp += 1
