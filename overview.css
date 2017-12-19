@@ -9,33 +9,42 @@ a, a:active, a:hover {
     color: black;
 }
 
-#visualization {
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+.block {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30%;
+    height: 19%;
     width: 100%;
-    background-color: lightgray
+}
+
+#title {
+    background-color: #ffe941;
+}
+
+#visualization {
+    background-color: #e3e3e3
+}
+
+#video {
+    background-color: #f0bdbd
 }
 
 #process_book {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 30%;
-    width: 100%;
-    background-color: lightskyblue
+    background-color: #badef5
 }
 
 #code {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 30%;
-    width: 100%;
-    background-color: lightgreen
+    background-color: #aff2af
 }
 
 .spacer {
-    height: 5%;
+    height: 1%;
 }
