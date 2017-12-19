@@ -62,7 +62,7 @@ h1 {
 
 #r_n_pokedex {
     fill: white;
-    font-weight: bold;
+    text-anchor: end;
     font-family: 'Press Start 2P';
 }
 
