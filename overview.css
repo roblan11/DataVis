@@ -15,34 +15,74 @@ h1 {
 
 h2 {
     text-align: center;
+    
+    /* Enable line breaks in as many browsers as possible */
+    /* works with: safari, chrome, firefox */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    word-break: break-all;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
 }
 
 .block {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 19%;
-    width: 100%;
+    height: 23%;
+    width: 48%;
+    position: absolute;
+    margin: 1%;
 }
 
 #title {
-    background-color: #ffe941;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30%;
+    width: 100%;
+    position: absolute;
+    top: 20%
+}
+
+#epfl {
+    height: 10%;
+    margin-left: 5%;
+    margin-top: 5%;
+}
+
+#lgg {
+    height: 10%;
+    margin-right: 5%;
+    margin-top: 5%;
 }
 
 #visualization {
-    background-color: #e3e3e3
-}
-
-#video {
-    background-color: #f0bdbd
-}
-
-#process_book {
-    background-color: #badef5
+    background-color: #fff6af;
+    top: 50%;
+    left: 0%
 }
 
 #code {
-    background-color: #aff2af
+    background-color: #d0d0d0;
+    top: 50%;
+    right: 0%
+}
+
+#video {
+    background-color: #ffbebe;
+    top: 75%;
+    left: 0%
+}
+
+#process_book {
+    background-color: #badef5;
+    top: 75%;
+    right: 0%
 }
 
 .spacer {
