@@ -7,4 +7,4 @@ This visualisation aims to reveal which Pokémon are the most alike according to
 [d3.js](https://d3js.org), [cytoscape.js](http://js.cytoscape.org) and [chosen](https://harvesthq.github.io/chosen/).
 
 ## Creators
-Robin Lang 249582, Kim Lan Phan Hoang 246764, Diana Petrescu 250971
+[Robin Lang](https://github.com/roblan11) , [Kim Lan Phan Hoang](https://github.com/pyphilia), [Diana Petrescu](https://github.com/dpetresc)
