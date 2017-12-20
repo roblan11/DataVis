@@ -29,14 +29,21 @@ h2 {
     hyphens: auto;
 }
 
-.block {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 23%;
-    width: 48%;
-    position: absolute;
-    margin: 1%;
+.spacer {
+    height: 5%;
+}
+
+#epfl {
+    height: 10%;
+    margin-left: 5%;
+    padding-bottom: 1%;
+}
+
+#kirell {
+    height: 8%;
+    margin-right: 5%;
+    background-color: black;
+    padding: 2%
 }
 
 #title {
@@ -49,16 +56,14 @@ h2 {
     top: 20%
 }
 
-#epfl {
-    height: 10%;
-    margin-left: 5%;
-    margin-top: 5%;
-}
-
-#lgg {
-    height: 10%;
-    margin-right: 5%;
-    margin-top: 5%;
+.block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 23%;
+    width: 48%;
+    position: absolute;
+    margin: 1%;
 }
 
 #visualization {
@@ -83,8 +88,4 @@ h2 {
     background-color: #badef5;
     top: 75%;
     right: 0%
-}
-
-.spacer {
-    height: 1%;
 }
