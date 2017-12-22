@@ -5,12 +5,9 @@ This visualisation aims to reveal which Pokémon are the most alike according to
 ## Links
 
 All links can be easily accessed from the [Overview page](https://roblan11.github.io/DataVis/).
-
-[Visualization](https://roblan11.github.io/DataVis/visualization/index.html)
-
-[screencast](https://youtu.be/YHtHBC8btVk)
-
-[Process book](https://docs.google.com/document/d/1T6Bph46EIjnIF1bpbxNUYQHrY664ttOGBZoswHLT9Uc)
+* [Visualization](https://roblan11.github.io/DataVis/visualization/index.html)
+* [Screencast](https://youtu.be/YHtHBC8btVk)
+* [Process book](https://docs.google.com/document/d/1T6Bph46EIjnIF1bpbxNUYQHrY664ttOGBZoswHLT9Uc)
 
 ## Used libraries
 
